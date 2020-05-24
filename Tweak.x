@@ -1,9 +1,9 @@
 #import "Headers/Headers.h"
 
-static HBPreferences *preferences;
-static NSString *previousTitle;
-extern dispatch_queue_t __BBServerQueue;
-static BBServer *bbServer;
+static HBPreferences *preferences = nil;
+static NSString *previousTitle = @"";
+extern dispatch_queue_t __BBServerQueue = nil;
+static BBServer *bbServer = nil;
 
 BOOL enabled;
 NSString *customText = @"";

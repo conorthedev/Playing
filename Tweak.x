@@ -14,9 +14,20 @@ void SendNotification(CFNotificationCenterRef center, void * observer, CFStringR
 		NSString *songTitle = [dict objectForKey:(__bridge NSString *)kMRMediaRemoteNowPlayingInfoTitle];
         NSString *songArtist = [dict objectForKey:(__bridge NSString *)kMRMediaRemoteNowPlayingInfoArtist];
 
-		if((!songTitle || !songArtist) && [(__bridge NSString *)name isEqualToString:@"dev.hyper.playing/TestNotification"]) {
-			songTitle = @"Title";
-			songArtist = @"Artist";
+		if(!songTitle || !songArtist) {
+			if([(__bridge NSString *)name isEqualToString:@"dev.hyper.playing/TestNotification"]) {
+				songTitle = @"Title";
+				songArtist = @"Artist";
+			} else {
+				return;
+			}
+		} else if ([songTitle isEqualToString:@""] || [songArtist isEqualToString:@""]) {
+			if([(__bridge NSString *)name isEqualToString:@"dev.hyper.playing/TestNotification"]) {
+				songTitle = @"Title";
+				songArtist = @"Artist";
+			} else {
+				return;
+			}
 		}
 
         if (songTitle && songArtist) {

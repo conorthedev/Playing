@@ -2,7 +2,7 @@
 
 static HBPreferences *preferences = nil;
 static NSString *previousTitle = @"";
-extern dispatch_queue_t __BBServerQueue = nil;
+extern dispatch_queue_t __BBServerQueue;
 static BBServer *bbServer = nil;
 
 BOOL enabled;
@@ -21,10 +21,12 @@ void SendNotification(CFNotificationCenterRef center, void * observer, CFStringR
 
         if (songTitle && songArtist) {
 			if(![songTitle isEqualToString:previousTitle] || [(__bridge NSString *)name isEqualToString:@"dev.hyper.playing/TestNotification"]) {
+				if(![previousTitle isEqualToString:@""]) {
+					dispatch_sync(__BBServerQueue, ^{
+						[bbServer _clearSection:@"dev.hyper.playing"];
+					});
+				}
 				previousTitle = songTitle;
-				dispatch_sync(__BBServerQueue, ^{
-					[bbServer _clearSection:@"dev.hyper.playing"];
-				});
 			} else if(![songTitle isEqualToString:@"Title"]) {
 				return;
 			}

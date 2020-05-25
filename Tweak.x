@@ -13,24 +13,27 @@ void SendNotification(CFNotificationCenterRef center, void * observer, CFStringR
         NSDictionary *dict = (__bridge NSDictionary *)information;
 		NSString *songTitle = [dict objectForKey:(__bridge NSString *)kMRMediaRemoteNowPlayingInfoTitle];
         NSString *songArtist = [dict objectForKey:(__bridge NSString *)kMRMediaRemoteNowPlayingInfoArtist];
+	NSString *songAlbum = [dict objectForKey:(__bridge NSString *)kMRMediaRemoteNowPlayingInfoAlbum];
 
-		if(!songTitle || !songArtist) {
+		if(!songTitle || !songArtist || !songAlbum) {
 			if([(__bridge NSString *)name isEqualToString:@"dev.hyper.playing/TestNotification"]) {
 				songTitle = @"Title";
 				songArtist = @"Artist";
+				songAlbum = @"Album";
 			} else {
 				return;
 			}
-		} else if ([songTitle isEqualToString:@""] || [songArtist isEqualToString:@""]) {
+		} else if ([songTitle isEqualToString:@""] || [songArtist isEqualToString:@""] || [songAlbum isEqualToString:@""]) {
 			if([(__bridge NSString *)name isEqualToString:@"dev.hyper.playing/TestNotification"]) {
 				songTitle = @"Title";
 				songArtist = @"Artist";
+				songAlbum = @"Album";
 			} else {
 				return;
 			}
 		}
 
-        if (songTitle && songArtist) {
+        if (songTitle && songArtist && songAlbum) {
 			if(![songTitle isEqualToString:previousTitle] || [(__bridge NSString *)name isEqualToString:@"dev.hyper.playing/TestNotification"]) {
 				if(![previousTitle isEqualToString:@""]) {
 					dispatch_sync(__BBServerQueue, ^{
@@ -44,10 +47,12 @@ void SendNotification(CFNotificationCenterRef center, void * observer, CFStringR
 
             void *handle = dlopen("/usr/lib/libnotifications.dylib", RTLD_LAZY);
 			if (handle != NULL) {    
-				NSString *msg = [NSString stringWithFormat:@"%@ by %@", songTitle, songArtist];         
+				NSString *msg = [NSString stringWithFormat:@"%@ by %@ in %@", songTitle, songArtist, songAlbum];
 				if(![customText isEqualToString:@""]) {
-					msg = [customText stringByReplacingOccurrencesOfString:@"@a" withString:songArtist];
-					msg = [msg stringByReplacingOccurrencesOfString:@"@t" withString:songTitle];
+					msg = [customText stringByReplacingOccurrencesOfString:@"@artist" withString:songArtist];
+					msg = [msg stringByReplacingOccurrencesOfString:@"@title" withString:songTitle];
+					msg = [msg stringByReplacingOccurrencesOfString:@"@album" withString:songAlbum];
+                    msg = [msg stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
 				}
 				#pragma clang diagnostic push
 				#pragma clang diagnostic ignored "-Wnonnull"
@@ -116,3 +121,4 @@ static void UpdatePlayingPreferences() {
 	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)UpdatePlayingPreferences, CFSTR("dev.hyper.playing/ReloadPrefs"), NULL, kNilOptions);
 	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)SendNotification, CFSTR("dev.hyper.playing/TestNotification"), NULL, kNilOptions);
 }
+

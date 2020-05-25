@@ -58,7 +58,7 @@ static void UpdatePlayingPreferences() {
 		@"customText": @""
     }];
 
-    [preferences registerBool:&enabled default:NO forKey:@"enabled"];
+    [preferences registerBool:&enabled default:YES forKey:@"enabled"];
 	[preferences registerObject:&customText default:@"" forKey:@"customText"];
 }
 

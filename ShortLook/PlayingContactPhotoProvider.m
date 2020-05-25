@@ -12,7 +12,12 @@
         return NULL;
     }
 
-	return [NSClassFromString(@"DDNotificationContactPhotoPromiseOffer") offerInstantlyResolvingPromiseWithPhotoIdentifier:identifier image:image];
+	DDNotificationContactPhotoPromiseOffer* promise = [NSClassFromString(@"DDNotificationContactPhotoPromiseOffer") offerInstantlyResolvingPromiseWithPhotoIdentifier:identifier image:image];
+    promise.titleOverride = [playingManager getSongTitle];
+    promise.subtitleOverride = [playingManager getArtistName];
+    promise.bodyOverride = [playingManager getAlbumName];
+
+    return promise;
 }
 
 @end

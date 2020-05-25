@@ -42,11 +42,11 @@ void SendTestNotification(CFNotificationCenterRef center, void * observer, CFStr
 }
 
 - (void)dealloc {
-  if ([PlayingNotificationHelper sharedInstance].bbServer == self) {
-    [PlayingNotificationHelper sharedInstance].bbServer = NULL;
-  }
+	if ([PlayingNotificationHelper sharedInstance].bbServer == self) {
+		[PlayingNotificationHelper sharedInstance].bbServer = NULL;
+	}
 
-  %orig;
+	%orig;
 }
 %end
 

@@ -62,7 +62,9 @@ extern dispatch_queue_t __BBServerQueue;
 
     if([_currentDictionary count] == 0 || (![newTitle isEqualToString:@""] && ![[self getSongTitle] isEqualToString:newTitle])) {
         _currentDictionary = dict;
-        [[PlayingNotificationHelper sharedInstance] submitNotification:dict[@"customText"]];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [[PlayingNotificationHelper sharedInstance] submitNotification:dict[@"customText"]];
+        });
     }
 }
 @end

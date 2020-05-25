@@ -8,6 +8,7 @@ extern dispatch_queue_t __BBServerQueue;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         sharedInstance = [PlayingManager alloc];
+        sharedInstance.currentDictionary = [NSDictionary new];
     });
     return sharedInstance;
 }
@@ -17,7 +18,7 @@ extern dispatch_queue_t __BBServerQueue;
 }
 
 -(UIImage *)getArtwork {
-    if(_currentDictionary == NULL || [_currentDictionary objectForKey:(__bridge NSString *)kMRMediaRemoteNowPlayingInfoArtworkData] == NULL) {
+    if([_currentDictionary count] == 0 || [_currentDictionary objectForKey:(__bridge NSString *)kMRMediaRemoteNowPlayingInfoArtworkData] == NULL) {
         return NULL;
     }
 
@@ -25,7 +26,7 @@ extern dispatch_queue_t __BBServerQueue;
 }
 
 -(NSString *)getArtworkIdentifier {
-    if(_currentDictionary == NULL) {
+    if([_currentDictionary count] == 0) {
         return @"";
     }
 
@@ -33,7 +34,7 @@ extern dispatch_queue_t __BBServerQueue;
 }
 
 -(NSString *)getSongTitle {
-    if(_currentDictionary == NULL) {
+    if([_currentDictionary count] == 0) {
         return @"";
     }
 
@@ -41,7 +42,7 @@ extern dispatch_queue_t __BBServerQueue;
 }
 
 -(NSString *)getArtistName {
-    if(_currentDictionary == NULL) {
+    if([_currentDictionary count] == 0) {
         return @"";
     }
 
@@ -49,7 +50,7 @@ extern dispatch_queue_t __BBServerQueue;
 }
 
 -(NSString *)getAlbumName {
-    if(_currentDictionary == NULL) {
+    if([_currentDictionary count] == 0) {
         return @"";
     }
 
@@ -59,9 +60,9 @@ extern dispatch_queue_t __BBServerQueue;
 -(void)setMetadata:(NSDictionary *)dict {
     NSString *newTitle = [dict objectForKey:(__bridge NSString *)kMRMediaRemoteNowPlayingInfoTitle];
 
-    if(_currentDictionary == NULL || (![newTitle isEqualToString:@""] && ![[self getSongTitle] isEqualToString:newTitle])) {
+    if([_currentDictionary count] == 0 || (![newTitle isEqualToString:@""] && ![[self getSongTitle] isEqualToString:newTitle])) {
         _currentDictionary = dict;
-        [[PlayingNotificationHelper sharedInstance] submitNotification:_currentDictionary[@"customText"]];
+        [[PlayingNotificationHelper sharedInstance] submitNotification:dict[@"customText"]];
     }
 }
 @end

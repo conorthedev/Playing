@@ -2,20 +2,14 @@
 #import <Cephei/HBPreferences.h>
 #import <MediaRemote/MediaRemote.h>
 
-@interface SBMediaController : NSObject
--(void)setNowPlayingInfo:(id)arg1;
-@end
-
 static HBPreferences *preferences = NULL;
 static NSString *previousTitle = @"";
 
 BOOL enabled;
 NSString *customText = @"";
 
-void SendNotification(CFNotificationCenterRef center, void * observer, CFStringRef name, const void * object, CFDictionaryRef userInfo) {
-	if([(__bridge NSString *)name isEqualToString:@"dev.hyper.playing/TestNotification"]) {
-		[[PlayingNotificationHelper sharedInstance] submitTestNotification:customText];
-	}
+void SendTestNotification(CFNotificationCenterRef center, void * observer, CFStringRef name, const void * object, CFDictionaryRef userInfo) {
+	[[PlayingNotificationHelper sharedInstance] submitTestNotification:customText];
 }
 
 %hook SBMediaController
@@ -23,13 +17,15 @@ void SendNotification(CFNotificationCenterRef center, void * observer, CFStringR
 -(void)setNowPlayingInfo:(id)arg1 {
 	%orig;
 	if(enabled) {
-		dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 1);
+		dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 0.75);
     	dispatch_after(delay, dispatch_get_main_queue(), ^(void){
-			NSMutableDictionary *dict = [[self valueForKey:@"nowPlayingInfo"] mutableCopy]
-			[dict setObject:customText forKey:@"customText"];
-			[[PlayingManager sharedInstance] setMetadata:dict];
+			MRMediaRemoteGetNowPlayingInfo(dispatch_get_main_queue(), ^(CFDictionaryRef information) {
+        		NSMutableDictionary *dict = [(__bridge NSDictionary *)information mutableCopy];
+				[dict setObject:customText forKey:@"customText"];
+				[[PlayingManager sharedInstance] setMetadata:dict];
+			});
 		});
-	}	
+	}
 }
 
 %end
@@ -69,6 +65,6 @@ static void UpdatePlayingPreferences() {
 %ctor {
 	UpdatePlayingPreferences();
 	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)UpdatePlayingPreferences, CFSTR("dev.hyper.playing/ReloadPrefs"), NULL, kNilOptions);
-	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)SendNotification, CFSTR("dev.hyper.playing/TestNotification"), NULL, kNilOptions);
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)SendTestNotification, CFSTR("dev.hyper.playing/TestNotification"), NULL, kNilOptions);
 }
 

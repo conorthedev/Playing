@@ -11,12 +11,9 @@ Playing_FILES = Tweak.x
 Playing_CFLAGS = -fobjc-arc
 Playing_PRIVATE_FRAMEWORKS = MediaRemote BulletinBoard
 Playing_EXTRA_FRAMEWORKS = Cephei
-Playing_LIBRARIES = MobileGestalt
+Playing_LIBRARIES = MobileGestalt playing
 
-SUBPROJECTS += Preferences Application
+SUBPROJECTS += libplaying Preferences Application ShortLook
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 include $(THEOS_MAKE_PATH)/aggregate.mk
-
-after-install::
-	install.exec "sbreload"

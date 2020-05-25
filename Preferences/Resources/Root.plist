@@ -20,7 +20,7 @@
 			<key>label</key>
 			<string>Configuration</string>
 			<key>footerText</key>
-			<string>For custom notification text, use @artist for the artist name and @title for the song title and @album for the album, add /n to create a line break</string>
+			<string>For custom notification text, use @a for the artist name and @t for the song title and @al for the album, add \n to create a line break</string>
 		</dict>
 		<dict>
 			<key>cell</key>

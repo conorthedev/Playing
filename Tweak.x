@@ -1,76 +1,21 @@
-#import "Headers/Headers.h"
+#import <Playing/libplaying.h>
+#import <Cephei/HBPreferences.h>
+#import <MediaRemote/MediaRemote.h>
 
-static HBPreferences *preferences = nil;
+@interface SBMediaController : NSObject
+-(void)setNowPlayingInfo:(id)arg1;
+@end
+
+static HBPreferences *preferences = NULL;
 static NSString *previousTitle = @"";
-extern dispatch_queue_t __BBServerQueue;
-static BBServer *bbServer = nil;
 
 BOOL enabled;
 NSString *customText = @"";
 
 void SendNotification(CFNotificationCenterRef center, void * observer, CFStringRef name, const void * object, CFDictionaryRef userInfo) {
-	MRMediaRemoteGetNowPlayingInfo(dispatch_get_main_queue(), ^(CFDictionaryRef information) {
-        NSDictionary *dict = (__bridge NSDictionary *)information;
-		NSString *songTitle = [dict objectForKey:(__bridge NSString *)kMRMediaRemoteNowPlayingInfoTitle];
-        NSString *songArtist = [dict objectForKey:(__bridge NSString *)kMRMediaRemoteNowPlayingInfoArtist];
-	NSString *songAlbum = [dict objectForKey:(__bridge NSString *)kMRMediaRemoteNowPlayingInfoAlbum];
-
-		if(!songTitle || !songArtist || !songAlbum) {
-			if([(__bridge NSString *)name isEqualToString:@"dev.hyper.playing/TestNotification"]) {
-				songTitle = @"Title";
-				songArtist = @"Artist";
-				songAlbum = @"Album";
-			} else {
-				return;
-			}
-		} else if ([songTitle isEqualToString:@""] || [songArtist isEqualToString:@""] || [songAlbum isEqualToString:@""]) {
-			if([(__bridge NSString *)name isEqualToString:@"dev.hyper.playing/TestNotification"]) {
-				songTitle = @"Title";
-				songArtist = @"Artist";
-				songAlbum = @"Album";
-			} else {
-				return;
-			}
-		}
-
-        if (songTitle && songArtist && songAlbum) {
-			if(![songTitle isEqualToString:previousTitle] || [(__bridge NSString *)name isEqualToString:@"dev.hyper.playing/TestNotification"]) {
-				if(![previousTitle isEqualToString:@""]) {
-					dispatch_sync(__BBServerQueue, ^{
-						[bbServer _clearSection:@"dev.hyper.playing"];
-					});
-				}
-				previousTitle = songTitle;
-			} else if(![songTitle isEqualToString:@"Title"]) {
-				return;
-			}
-
-            void *handle = dlopen("/usr/lib/libnotifications.dylib", RTLD_LAZY);
-			if (handle != NULL) {    
-				NSString *msg = [NSString stringWithFormat:@"%@ by %@ in %@", songTitle, songArtist, songAlbum];
-				if(![customText isEqualToString:@""]) {
-					msg = [customText stringByReplacingOccurrencesOfString:@"@artist" withString:songArtist];
-					msg = [msg stringByReplacingOccurrencesOfString:@"@title" withString:songTitle];
-					msg = [msg stringByReplacingOccurrencesOfString:@"@album" withString:songAlbum];
-                    msg = [msg stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
-				}
-				#pragma clang diagnostic push
-				#pragma clang diagnostic ignored "-Wnonnull"
-				
-				[objc_getClass("CPNotification") showAlertWithTitle:@"Now Playing"
-								message:msg
-								userInfo:@{@"" : @""}
-								badgeCount:0
-								soundName:nil
-								delay:0.00
-								repeats:NO
-								bundleId:@"dev.hyper.playing"];   
-				
-				#pragma clang diagnostic pop                               
-				dlclose(handle);
-			}
-        }
-    });
+	if([(__bridge NSString *)name isEqualToString:@"dev.hyper.playing/TestNotification"]) {
+		[[PlayingNotificationHelper sharedInstance] submitTestNotification:customText];
+	}
 }
 
 %hook SBMediaController
@@ -78,7 +23,12 @@ void SendNotification(CFNotificationCenterRef center, void * observer, CFStringR
 -(void)setNowPlayingInfo:(id)arg1 {
 	%orig;
 	if(enabled) {
-		SendNotification(CFNotificationCenterGetDarwinNotifyCenter(), NULL, NULL, NULL, NULL);
+		dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 1);
+    	dispatch_after(delay, dispatch_get_main_queue(), ^(void){
+			NSMutableDictionary *dict = [[self valueForKey:@"nowPlayingInfo"] mutableCopy]
+			[dict setObject:customText forKey:@"customText"];
+			[[PlayingManager sharedInstance] setMetadata:dict];
+		});
 	}	
 }
 
@@ -86,18 +36,18 @@ void SendNotification(CFNotificationCenterRef center, void * observer, CFStringR
 
 %hook BBServer
 -(id)initWithQueue:(id)arg1 {
-    bbServer = %orig;
-    return bbServer;
+    [PlayingNotificationHelper sharedInstance].bbServer = %orig;
+    return [PlayingNotificationHelper sharedInstance].bbServer;
 }
 
 -(id)initWithQueue:(id)arg1 dataProviderManager:(id)arg2 syncService:(id)arg3 dismissalSyncCache:(id)arg4 observerListener:(id)arg5 utilitiesListener:(id)arg6 conduitListener:(id)arg7 systemStateListener:(id)arg8 settingsListener:(id)arg9 {
-    bbServer = %orig;
-    return bbServer;
+    [PlayingNotificationHelper sharedInstance].bbServer = %orig;
+    return [PlayingNotificationHelper sharedInstance].bbServer;
 }
 
 - (void)dealloc {
-  if (bbServer == self) {
-    bbServer = nil;
+  if ([PlayingNotificationHelper sharedInstance].bbServer == self) {
+    [PlayingNotificationHelper sharedInstance].bbServer = NULL;
   }
 
   %orig;

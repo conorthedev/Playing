@@ -87,7 +87,7 @@ extern dispatch_queue_t __BBServerQueue;
     [self clearNotifications];
 
     NSString *songTitle = [[PlayingManager sharedInstance] getSongTitle];
-    NSString *songArtist = [[PlayingManager sharedInstance] getArtistName] ?: @"Unkown Artist";
+    NSString *songArtist = [[PlayingManager sharedInstance] getArtistName] ?: @"Unknown Artist";
     NSString *songAlbum = [[PlayingManager sharedInstance] getAlbumName] ?: @"Unknown Album";
     if(songTitle == NULL) {
         return;

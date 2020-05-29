@@ -87,15 +87,15 @@ extern dispatch_queue_t __BBServerQueue;
     [self clearNotifications];
 
     NSString *songTitle = [[PlayingManager sharedInstance] getSongTitle];
-    NSString *songArtist = [[PlayingManager sharedInstance] getArtistName];
-    NSString *songAlbum = [[PlayingManager sharedInstance] getAlbumName];
-    if(songTitle == NULL || songArtist == NULL || songAlbum == NULL) {
+    NSString *songArtist = [[PlayingManager sharedInstance] getArtistName] ? @"Unkown Artist";
+    NSString *songAlbum = [[PlayingManager sharedInstance] getAlbumName] ? @"Unknown Album";
+    if(songTitle == NULL) {
         return;
     }
-    
+
     if (![songTitle isEqualToString:@""] && ![songArtist isEqualToString:@""] && ![songAlbum isEqualToString:@""]) {
         void *handle = dlopen("/usr/lib/libnotifications.dylib", RTLD_LAZY);
-        if (handle != NULL) {    
+        if (handle != NULL) {
             NSString *msg = [NSString stringWithFormat:@"%@ by %@ in %@", songTitle, songArtist, songAlbum];
             if(![messageFormat isEqualToString:@""]) {
                 msg = [messageFormat stringByReplacingOccurrencesOfString:@"@a" withString:songArtist];

@@ -14,8 +14,8 @@
 
 	DDNotificationContactPhotoPromiseOffer* promise = [NSClassFromString(@"DDNotificationContactPhotoPromiseOffer") offerInstantlyResolvingPromiseWithPhotoIdentifier:identifier image:image];
     promise.titleOverride = [playingManager getSongTitle];
-    promise.subtitleOverride = [playingManager getArtistName];
-    promise.bodyOverride = [playingManager getAlbumName];
+    promise.subtitleOverride = [playingManager getArtistName] ? @"Unkown Artist";
+    promise.bodyOverride = [playingManager getAlbumName] ? @"Unkown Album";
 
     return promise;
 }

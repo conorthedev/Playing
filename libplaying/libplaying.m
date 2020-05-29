@@ -98,8 +98,8 @@ extern dispatch_queue_t __BBServerQueue;
         if (handle != NULL) {
             NSString *msg = [NSString stringWithFormat:@"%@ by %@ in %@", songTitle, songArtist, songAlbum];
             if(![messageFormat isEqualToString:@""]) {
-                msg = [msg stringByReplacingOccurrencesOfString:@"@al" withString:songAlbum];
-                msg = [messageFormat stringByReplacingOccurrencesOfString:@"@a" withString:songArtist];
+                msg = [messageFormat stringByReplacingOccurrencesOfString:@"@al" withString:songAlbum];
+                msg = [msg stringByReplacingOccurrencesOfString:@"@a" withString:songArtist];
                 msg = [msg stringByReplacingOccurrencesOfString:@"@t" withString:songTitle];
                 msg = [msg stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
             }

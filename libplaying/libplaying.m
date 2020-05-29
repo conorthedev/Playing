@@ -87,8 +87,8 @@ extern dispatch_queue_t __BBServerQueue;
     [self clearNotifications];
 
     NSString *songTitle = [[PlayingManager sharedInstance] getSongTitle];
-    NSString *songArtist = [[PlayingManager sharedInstance] getArtistName] ? @"Unkown Artist";
-    NSString *songAlbum = [[PlayingManager sharedInstance] getAlbumName] ? @"Unknown Album";
+    NSString *songArtist = [[PlayingManager sharedInstance] getArtistName] ?: @"Unkown Artist";
+    NSString *songAlbum = [[PlayingManager sharedInstance] getAlbumName] ?: @"Unknown Album";
     if(songTitle == NULL) {
         return;
     }
@@ -98,9 +98,9 @@ extern dispatch_queue_t __BBServerQueue;
         if (handle != NULL) {
             NSString *msg = [NSString stringWithFormat:@"%@ by %@ in %@", songTitle, songArtist, songAlbum];
             if(![messageFormat isEqualToString:@""]) {
+                msg = [msg stringByReplacingOccurrencesOfString:@"@al" withString:songAlbum];
                 msg = [messageFormat stringByReplacingOccurrencesOfString:@"@a" withString:songArtist];
                 msg = [msg stringByReplacingOccurrencesOfString:@"@t" withString:songTitle];
-                msg = [msg stringByReplacingOccurrencesOfString:@"@al" withString:songAlbum];
                 msg = [msg stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
             }
 

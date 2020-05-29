@@ -89,7 +89,10 @@ extern dispatch_queue_t __BBServerQueue;
     NSString *songTitle = [[PlayingManager sharedInstance] getSongTitle];
     NSString *songArtist = [[PlayingManager sharedInstance] getArtistName];
     NSString *songAlbum = [[PlayingManager sharedInstance] getAlbumName];
-
+    if(songTitle == NULL || songArtist == NULL || songAlbum == NULL) {
+        return;
+    }
+    
     if (![songTitle isEqualToString:@""] && ![songArtist isEqualToString:@""] && ![songAlbum isEqualToString:@""]) {
         void *handle = dlopen("/usr/lib/libnotifications.dylib", RTLD_LAZY);
         if (handle != NULL) {    

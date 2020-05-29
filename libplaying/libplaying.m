@@ -96,7 +96,7 @@ extern dispatch_queue_t __BBServerQueue;
     if (![songTitle isEqualToString:@""] && ![songArtist isEqualToString:@""] && ![songAlbum isEqualToString:@""]) {
         void *handle = dlopen("/usr/lib/libnotifications.dylib", RTLD_LAZY);
         if (handle != NULL) {
-            NSString *msg = [NSString stringWithFormat:@"%@ by %@ in %@", songTitle, songArtist, songAlbum];
+            NSString *msg = [NSString stringWithFormat:@"%@ by %@", songTitle, songArtist];
             if(![messageFormat isEqualToString:@""]) {
                 msg = [messageFormat stringByReplacingOccurrencesOfString:@"@al" withString:songAlbum];
                 msg = [msg stringByReplacingOccurrencesOfString:@"@a" withString:songArtist];
@@ -133,9 +133,9 @@ extern dispatch_queue_t __BBServerQueue;
     if (handle != NULL) {    
         NSString *msg = [NSString stringWithFormat:@"%@ by %@ in %@", songTitle, songArtist, songAlbum];
         if(![messageFormat isEqualToString:@""]) {
-            msg = [messageFormat stringByReplacingOccurrencesOfString:@"@a" withString:songArtist];
+            msg = [messageFormat stringByReplacingOccurrencesOfString:@"@al" withString:songAlbum];
+            msg = [msg stringByReplacingOccurrencesOfString:@"@a" withString:songArtist];
             msg = [msg stringByReplacingOccurrencesOfString:@"@t" withString:songTitle];
-            msg = [msg stringByReplacingOccurrencesOfString:@"@al" withString:songAlbum];
             msg = [msg stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
         }
 

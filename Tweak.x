@@ -18,28 +18,28 @@ void SendTestNotification(CFNotificationCenterRef center, void * observer, CFStr
 -(void)setNowPlayingInfo:(id)arg1 {
 	%orig;
 	if(enabled) {
-		NSString *bundleID = @"";
-		NSString *currentID = @"";
-		
-		if([self nowPlayingApplication]) {
-			bundleID = [self nowPlayingApplication].bundleIdentifier;
-		}
-
-		if([[%c(SpringBoard) sharedApplication] _accessibilityFrontMostApplication]) {
-			currentID = [[%c(SpringBoard) sharedApplication] _accessibilityFrontMostApplication].bundleIdentifier;
-		}
-
-		if(bundleID || ![bundleID isEqualToString:@""]) {
-			if(currentID || ![currentID isEqualToString:@""]) {
-				if ([[preferences objectForKey:[@"blacklist-" stringByAppendingString:bundleID]] boolValue] || [[preferences objectForKey:[@"dontshow-" stringByAppendingString:currentID]] boolValue]) {
-					return;
-				}
-			}
-		}
-		
 		dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 0.75);
     	dispatch_after(delay, dispatch_get_main_queue(), ^(void){
 			MRMediaRemoteGetNowPlayingInfo(dispatch_get_main_queue(), ^(CFDictionaryRef information) {
+				NSString *bundleID = @"";
+				NSString *currentID = @"";
+				
+				if([self nowPlayingApplication]) {
+					bundleID = [self nowPlayingApplication].bundleIdentifier;
+				}
+
+				if([[%c(SpringBoard) sharedApplication] _accessibilityFrontMostApplication]) {
+					currentID = [[%c(SpringBoard) sharedApplication] _accessibilityFrontMostApplication].bundleIdentifier;
+				}
+
+				if(bundleID || ![bundleID isEqualToString:@""]) {
+					if(currentID || ![currentID isEqualToString:@""]) {
+						if ([[preferences objectForKey:[@"blacklist-" stringByAppendingString:bundleID]] boolValue] || [[preferences objectForKey:[@"dontshow-" stringByAppendingString:currentID]] boolValue]) {
+							return;
+						}
+					}
+				}
+				
 				NSMutableDictionary *dict = [(__bridge NSDictionary *)information mutableCopy];
 				[dict setObject:customText forKey:@"customText"];
 				[dict setObject:bundleID forKey:@"bundleID"];

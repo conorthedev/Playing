@@ -52,7 +52,7 @@ void SendTestNotification(CFNotificationCenterRef center, void * observer, CFStr
 
 
 static void UpdatePlayingPreferences() {
-	preferences = [[HBPreferences alloc] initWithIdentifier:@"dev.hyper.playing.prefs"];
+	preferences = [[HBPreferences alloc] initWithIdentifier:@"me.conorthedev.playing.prefs"];
     [preferences registerDefaults:@{
         @"enabled": @YES,
 		@"customText": @""
@@ -64,7 +64,7 @@ static void UpdatePlayingPreferences() {
 
 %ctor {
 	UpdatePlayingPreferences();
-	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)UpdatePlayingPreferences, CFSTR("dev.hyper.playing/ReloadPrefs"), NULL, kNilOptions);
-	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)SendTestNotification, CFSTR("dev.hyper.playing/TestNotification"), NULL, kNilOptions);
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)UpdatePlayingPreferences, CFSTR("me.conorthedev.playing/ReloadPrefs"), NULL, kNilOptions);
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)SendTestNotification, CFSTR("me.conorthedev.playing/TestNotification"), NULL, kNilOptions);
 }
 

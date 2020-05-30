@@ -10,7 +10,7 @@
 			<key>headerCellClass</key>
 			<string>HBPackageNameHeaderCell</string>
 			<key>packageIdentifier</key>
-			<string>dev.hyper.playing</string>
+			<string>me.conorthedev.playing</string>
 			<key>icon</key>
 			<string>AppIcon40x40.png</string>
 		</dict>
@@ -28,13 +28,13 @@
 			<key>default</key>
 			<true/>
 			<key>defaults</key>
-			<string>dev.hyper.playing.prefs</string>
+			<string>me.conorthedev.playing.prefs</string>
 			<key>key</key>
 			<string>enabled</string>
 			<key>label</key>
 			<string>Enabled</string>
 			<key>PostNotification</key>
-			<string>dev.hyper.playing/ReloadPrefs</string>
+			<string>me.conorthedev.playing/ReloadPrefs</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -42,7 +42,7 @@
 			<key>cellClass</key>
 			<string>ReturnableTextCell</string>
 			<key>defaults</key>
-			<string>dev.hyper.playing.prefs</string>
+			<string>me.conorthedev.playing.prefs</string>
 			<key>detail</key>
 			<string>PSDetailController</string>
 			<key>key</key>
@@ -52,7 +52,7 @@
 			<key>placeholder</key>
 			<string>Custom notification text, leave blank for default.</string>
 			<key>PostNotification</key>
-			<string>dev.hyper.playing/ReloadPrefs</string>
+			<string>me.conorthedev.playing/ReloadPrefs</string>
 		</dict>
 		<dict>
 			<key>cell</key>

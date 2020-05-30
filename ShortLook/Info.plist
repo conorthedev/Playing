@@ -7,7 +7,7 @@
         <key>DDNotificationExternalProviderClasses</key>
         <dict>
             <key>PlayingContactPhotoProvider</key>
-            <string>dev.hyper.playing</string>
+            <string>me.conorthedev.playing</string>
         </dict>
         <key>DDNotificationExternalProviderAPIVersion</key>
         <integer>1</integer>

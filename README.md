@@ -12,4 +12,4 @@ Playing is a tweak that allows you to get a notification when a new song starts.
     - Pretty self-explanatory, isn't it? Respringing means less time listening to music, and no one wants that!
 
 ### Download
-You can get Playing on [Dynastic Repo for free](https://repo.dynastic.co/package/dev.hyper.playing)!
+You can get Playing on [Dynastic Repo for free](https://repo.dynastic.co/package/me.conorthedev.playing)!

@@ -114,7 +114,7 @@ extern dispatch_queue_t __BBServerQueue;
                             soundName:NULL
                             delay:0.00
                             repeats:NO
-                            bundleId:@"dev.hyper.playing"];   
+                            bundleId:@"me.conorthedev.playing"];   
             
             #pragma clang diagnostic pop                               
             dlclose(handle);
@@ -149,7 +149,7 @@ extern dispatch_queue_t __BBServerQueue;
                         soundName:NULL
                         delay:0.00
                         repeats:NO
-                        bundleId:@"dev.hyper.playing"];   
+                        bundleId:@"me.conorthedev.playing"];   
         
         #pragma clang diagnostic pop                               
         dlclose(handle);
@@ -159,7 +159,7 @@ extern dispatch_queue_t __BBServerQueue;
 -(void)clearNotifications {
     dispatch_sync(__BBServerQueue, ^{
         if(self.bbServer != NULL) {
-            [self.bbServer _clearSection:@"dev.hyper.playing"];
+            [self.bbServer _clearSection:@"me.conorthedev.playing"];
         }
 	});
 }

@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>PlayingPrefs</string>
 	<key>CFBundleIdentifier</key>
-	<string>dev.hyper.playing.prefs</string>
+	<string>me.conorthedev.playing.prefs</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>

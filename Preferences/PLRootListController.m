@@ -11,7 +11,7 @@
 }
 
 - (void)testNotification:(id)sender {
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)@"dev.hyper.playing/TestNotification", NULL, NULL, TRUE);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)@"me.conorthedev.playing/TestNotification", NULL, NULL, TRUE);
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {        

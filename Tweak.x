@@ -4,7 +4,6 @@
 #import <AppList/AppList.h>
 
 static HBPreferences *preferences = NULL;
-static NSString *previousTitle = @"";
 
 BOOL enabled;
 BOOL asMediaApp;
@@ -80,7 +79,7 @@ void SendTestNotification(CFNotificationCenterRef center, void * observer, CFStr
 	if(!asMediaApp) {
 		return %orig;
 	}
-	
+
 	if([orig isEqualToString:[[PlayingManager sharedInstance] getCurrentApp]]) {
 		return @"me.conorthedev.playing";
 	} else {

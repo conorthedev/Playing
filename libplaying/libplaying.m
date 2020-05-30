@@ -117,7 +117,7 @@ extern dispatch_queue_t __BBServerQueue;
         bulletin.sectionID = bundleID;
         bulletin.bulletinID = [[NSProcessInfo processInfo] globallyUniqueString];
         bulletin.recordID = [[NSProcessInfo processInfo] globallyUniqueString];
-        bulletin.publisherBulletinID = [[NSProcessInfo processInfo] globallyUniqueString];
+        bulletin.publisherBulletinID = [NSString stringWithFormat:@"me.conorthedev.playing-%@",[[NSProcessInfo processInfo] globallyUniqueString]];
         bulletin.date = [NSDate new];
         bulletin.defaultAction = [objc_getClass("BBAction") actionWithLaunchBundleID:bundleID];
 
@@ -125,7 +125,7 @@ extern dispatch_queue_t __BBServerQueue;
             if(self.bbServer != NULL) {
                 [self.bbServer publishBulletin:bulletin destinations:15];
             }
-        });        
+        });       
     }
 }
 
@@ -171,4 +171,5 @@ extern dispatch_queue_t __BBServerQueue;
         }
 	});
 }
+
 @end

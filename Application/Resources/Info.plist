@@ -158,5 +158,37 @@
 	</array>
 	<key>SBAppUsesLocalNotifications</key>
 	<true/>
+	<key>com.apple.bulletinboard.settings</key>
+	<true/>
+	<key>UNUserNotificationCenter</key>
+	<dict>
+		<key>UNAutomaticallyShowSettings</key>
+		<true/>
+		<key>UNDaemonShouldReceiveApplicationEvents</key>
+		<true/>
+		<key>UNDaemonShouldReceiveBackgroundResponses</key>
+		<true/>
+		<key>UNDaemonShouldReceiveNotificationSettingsUpdates</key>
+		<true/>
+		<key>UNDefaultSettings</key>
+		<dict>
+			<key>UNSettingAlerts</key>
+			<true/>
+			<key>UNSettingBadges</key>
+			<true/>
+			<key>UNSettingLockScreen</key>
+			<true/>
+			<key>UNSettingNotificationCenter</key>
+			<true/>
+			<key>UNSettingProvidesAppNotificationSettings</key>
+			<true/>
+			<key>UNSettingSounds</key>
+			<true/>
+		</dict>
+		<key>UNSettingProvidesAppNotificationSettings</key>
+		<true/>
+		<key>UNSuppressUserAuthorizationPrompt</key>
+		<true/>
+	</dict>
 </dict>
 </plist>

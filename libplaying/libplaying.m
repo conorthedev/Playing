@@ -57,6 +57,14 @@ extern dispatch_queue_t __BBServerQueue;
     return [_currentDictionary objectForKey:(__bridge NSString *)kMRMediaRemoteNowPlayingInfoAlbum];
 }
 
+-(NSString *)getCurrentApp {
+    if([_currentDictionary count] == 0) {
+        return @"";
+    }
+
+    return _currentDictionary[@"bundleID"];
+}
+
 -(void)setMetadata:(NSDictionary *)dict {
     NSString *newTitle = [dict objectForKey:(__bridge NSString *)kMRMediaRemoteNowPlayingInfoTitle];
 

@@ -11,6 +11,20 @@ extern CFStringRef kMRMediaRemoteNowPlayingInfoArtworkIdentifier;
 extern CFStringRef kMRMediaRemoteNowPlayingInfoContentItemIdentifier;
 extern CFStringRef kMRMediaRemoteNowPlayingInfoArtworkDataHeight;
 
+@interface BBAction : NSObject
++(id)actionWithLaunchBundleID:(id)arg1;
+@end
+
+@interface BBBulletin : NSObject
+@property (nonatomic, copy) NSString *sectionID;
+@property (nonatomic, copy) BBAction *defaultAction;
+- (id)responseForAction:(id)arg1;
+@end
+
+@interface BBResponse : NSObject
+@property (nonatomic, copy) NSString *bulletinID;
+@end
+
 @interface SBApplication : NSObject
 @property (nonatomic,readonly) NSString *bundleIdentifier;
 @end
@@ -23,6 +37,9 @@ extern CFStringRef kMRMediaRemoteNowPlayingInfoArtworkDataHeight;
 - (void)_clearSection:(id)arg1;
 + (id)savedSectionInfo;
 - (id)_sortedSectionIDs;
+- (id)allBulletinIDsForSectionID:(id)arg1;
+-(id)_bulletinsForIDs:(id)arg1;
+-(id)_allBulletinsForSectionID:(id)arg1 ;
 @end
 
 @interface CPNotification : NSObject
@@ -44,6 +61,7 @@ extern CFStringRef kMRMediaRemoteNowPlayingInfoArtworkDataHeight;
 -(NSString *)getSongTitle;
 -(NSString *)getArtistName;
 -(NSString *)getAlbumName;
+-(NSString *)getCurrentApp;
 
 -(void)setMetadata:(NSDictionary *)dict;
 @end

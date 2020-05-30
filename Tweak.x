@@ -28,7 +28,8 @@ void SendTestNotification(CFNotificationCenterRef center, void * observer, CFStr
 			MRMediaRemoteGetNowPlayingInfo(dispatch_get_main_queue(), ^(CFDictionaryRef information) {
 				NSMutableDictionary *dict = [(__bridge NSDictionary *)information mutableCopy];
 				[dict setObject:customText forKey:@"customText"];
-				
+				[dict setObject:bundleID forKey:@"bundleID"];
+
 				[[PlayingManager sharedInstance] setMetadata:dict];
 			});
 		});
@@ -54,6 +55,15 @@ void SendTestNotification(CFNotificationCenterRef center, void * observer, CFStr
 	}
 
 	%orig;
+}
+
+-(void)publishBulletin:(BBBulletin *)bulletin destinations:(unsigned int)arg2 {
+	if([[[PlayingManager sharedInstance] getCurrentApp] isEqualToString:@""] || ![bulletin.sectionID isEqualToString:@"me.conorthedev.playing"]) {
+		return;
+	}
+
+	bulletin.defaultAction = [%c(BBAction) actionWithLaunchBundleID:[[PlayingManager sharedInstance] getCurrentApp]];
+	%orig(bulletin, arg2);
 }
 %end
 

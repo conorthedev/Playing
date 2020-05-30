@@ -10,7 +10,7 @@
 			<key>headerCellClass</key>
 			<string>HBPackageNameHeaderCell</string>
 			<key>packageIdentifier</key>
-			<string>me.conorthedev.playing</string>
+			<string>dev.hyper.playing</string>
 			<key>icon</key>
 			<string>AppIcon40x40.png</string>
 		</dict>
@@ -28,7 +28,7 @@
 			<key>default</key>
 			<true/>
 			<key>defaults</key>
-			<string>me.conorthedev.playing.prefs</string>
+			<string>dev.hyper.playing.prefs</string>
 			<key>key</key>
 			<string>enabled</string>
 			<key>label</key>
@@ -42,7 +42,7 @@
 			<key>cellClass</key>
 			<string>ReturnableTextCell</string>
 			<key>defaults</key>
-			<string>me.conorthedev.playing.prefs</string>
+			<string>dev.hyper.playing.prefs</string>
 			<key>detail</key>
 			<string>PSDetailController</string>
 			<key>key</key>
@@ -111,7 +111,7 @@
 			<key>ALSettingsKeyPrefix</key>
 			<string>blacklist-</string>
 			<key>ALSettingsPath</key>
-			<string>/var/mobile/Library/Preferences/me.conorthedev.playing.prefs.plist</string>
+			<string>/var/mobile/Library/Preferences/dev.hyper.playing.prefs.plist</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -162,7 +162,7 @@
 			<key>ALSettingsKeyPrefix</key>
 			<string>dontshow-</string>
 			<key>ALSettingsPath</key>
-			<string>/var/mobile/Library/Preferences/me.conorthedev.playing.prefs.plist</string>
+			<string>/var/mobile/Library/Preferences/dev.hyper.playing.prefs.plist</string>
 		</dict>
 		<dict>
 			<key>cell</key>

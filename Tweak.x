@@ -88,7 +88,7 @@ void SendTestNotification(CFNotificationCenterRef center, void * observer, CFStr
 %end
 
 static void UpdatePlayingPreferences() {
-	preferences = [[HBPreferences alloc] initWithIdentifier:@"me.conorthedev.playing.prefs"];
+	preferences = [[HBPreferences alloc] initWithIdentifier:@"dev.hyper.playing.prefs"];
     [preferences registerDefaults:@{
         @"enabled": @YES,
 		@"customText": @""

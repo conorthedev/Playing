@@ -101,7 +101,7 @@ extern dispatch_queue_t __BBServerQueue;
         return;
     }
 
-    if (![songTitle isEqualToString:@"Loading..."] || ![songTitle isEqualToString:@""] && ![songArtist isEqualToString:@""] && ![songAlbum isEqualToString:@""]) {
+    if (![songTitle isEqualToString:@"Loading..."] && ![songTitle isEqualToString:@""] && ![songArtist isEqualToString:@""] && ![songAlbum isEqualToString:@""]) {
         void *handle = dlopen("/usr/lib/libnotifications.dylib", RTLD_LAZY);
         if (handle != NULL) {
             NSString *msg = [NSString stringWithFormat:@"%@ by %@", songTitle, songArtist];
@@ -131,6 +131,7 @@ extern dispatch_queue_t __BBServerQueue;
 }
 
 -(void)submitTestNotification:(NSString *)messageFormat {
+    self.sendingTest = true;
     [self clearNotifications];
 
     NSString *songTitle = @"Title";

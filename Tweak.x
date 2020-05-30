@@ -13,15 +13,28 @@ void SendTestNotification(CFNotificationCenterRef center, void * observer, CFStr
 	[[PlayingNotificationHelper sharedInstance] submitTestNotification:customText];
 }
 
+void ClearBanners(CFNotificationCenterRef center, void * observer, CFStringRef name, const void * object, CFDictionaryRef userInfo) {
+	[[PlayingNotificationHelper sharedInstance] clearNotifications];
+}
+
 %hook SBMediaController
 
 -(void)setNowPlayingInfo:(id)arg1 {
 	%orig;
 	if(enabled) {
 		NSString *bundleID = [self nowPlayingApplication].bundleIdentifier;
+		SBApplication *currentApp = [[%c(SpringBoard) sharedApplication] _accessibilityFrontMostApplication];
+
 		if ([[preferences objectForKey:[@"blacklist-" stringByAppendingString:bundleID]] boolValue]) {
 			return;
 		}
+
+		if(currentApp != NULL || currentApp.bundleIdentifier == NULL || [currentApp.bundleIdentifier isEqualToString:@""]) {
+			if ([[preferences objectForKey:[@"dontshow-" stringByAppendingString:currentApp.bundleIdentifier]] boolValue]) {
+				return;
+			}
+		}
+		
 
 		dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 0.75);
     	dispatch_after(delay, dispatch_get_main_queue(), ^(void){
@@ -58,11 +71,17 @@ void SendTestNotification(CFNotificationCenterRef center, void * observer, CFStr
 }
 
 -(void)publishBulletin:(BBBulletin *)bulletin destinations:(unsigned int)arg2 {
-	if([[[PlayingManager sharedInstance] getCurrentApp] isEqualToString:@""] || ![bulletin.sectionID isEqualToString:@"me.conorthedev.playing"]) {
-		return;
+	if(([[[PlayingManager sharedInstance] getCurrentApp] isEqualToString:@""] || ![PlayingNotificationHelper sharedInstance].sendingTest)) {
+		if(![bulletin.sectionID isEqualToString:@"me.conorthedev.playing"]) {
+			return;
+		}
 	}
 
 	bulletin.defaultAction = [%c(BBAction) actionWithLaunchBundleID:[[PlayingManager sharedInstance] getCurrentApp]];
+
+	if([PlayingNotificationHelper sharedInstance].sendingTest) {
+		[PlayingNotificationHelper sharedInstance].sendingTest = ![PlayingNotificationHelper sharedInstance].sendingTest;
+	}
 	%orig(bulletin, arg2);
 }
 %end
@@ -82,5 +101,6 @@ static void UpdatePlayingPreferences() {
 	UpdatePlayingPreferences();
 	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)UpdatePlayingPreferences, CFSTR("me.conorthedev.playing/ReloadPrefs"), NULL, kNilOptions);
 	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)SendTestNotification, CFSTR("me.conorthedev.playing/TestNotification"), NULL, kNilOptions);
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)ClearBanners, CFSTR("me.conorthedev.playing/ClearBanners"), NULL, kNilOptions);
 }
 

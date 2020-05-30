@@ -14,6 +14,10 @@
     CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)@"me.conorthedev.playing/TestNotification", NULL, NULL, TRUE);
 }
 
+- (void)clearBanners:(id)sender {
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)@"me.conorthedev.playing/ClearBanners", NULL, NULL, TRUE);
+}
+
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {        
     [textField resignFirstResponder];
     return YES;

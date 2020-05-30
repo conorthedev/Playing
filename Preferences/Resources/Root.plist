@@ -50,9 +50,17 @@
 			<key>label</key>
 			<string>Custom Text</string>
 			<key>placeholder</key>
-			<string>Custom notification text, leave blank for default.</string>
+			<string>Leave blank for default</string>
 			<key>PostNotification</key>
 			<string>me.conorthedev.playing/ReloadPrefs</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>More</string>
+			<key>footerText</key>
+			<string>Don't like the vibrations or want to disable it on the lockscreen? Go to Settings > Notifications > Playing to change how they behave.&#xA;If your Playing notifications arent clearing automatically, click 'Clear Playing Banners' to fix that</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -62,7 +70,7 @@
 			<key>isController</key>
 			<string>1</string>
 			<key>label</key>
-			<string>Blacklist</string>
+			<string>Blacklisted Apps</string>
 			<key>ALAllowsSelection</key>
 			<string>1</string>
 			<key>ALChangeNotification</key>
@@ -107,11 +115,54 @@
 		</dict>
 		<dict>
 			<key>cell</key>
-			<string>PSGroupCell</string>
+			<string>PSLinkCell</string>
+			<key>bundle</key>
+			<string>AppList</string>
+			<key>isController</key>
+			<string>1</string>
 			<key>label</key>
-			<string>More</string>
-			<key>footerText</key>
-			<string>Don't like the vibrations or want to disable it on the lockscreen? Go to Settings > Notifications > Playing to change how they behave</string>
+			<string>Apps to hide banners in</string>
+			<key>ALAllowsSelection</key>
+			<string>1</string>
+			<key>ALChangeNotification</key>
+			<string>me.conorthedev.playing/ReloadPrefs</string>
+			<key>ALSectionDescriptors</key>
+			<array>
+				<dict>
+					<key>footer-title</key>
+					<string>Block apps you don't want the notifications showing in</string>
+					<key>items</key>
+					<array/>
+				</dict>
+				<dict>
+					<key>cell-class-name</key>
+					<string>ALCheckCell</string>
+					<key>icon-size</key>
+					<string>29</string>
+					<key>suppress-hidden-apps</key>
+					<string>1</string>
+					<key>title</key>
+					<string>User Apps</string>
+					<key>predicate</key>
+					<string>isSystemApplication = FALSE</string>
+				</dict>
+				<dict>
+					<key>cell-class-name</key>
+					<string>ALCheckCell</string>
+					<key>icon-size</key>
+					<string>29</string>
+					<key>suppress-hidden-apps</key>
+					<string>1</string>
+					<key>title</key>
+					<string>System Apps</string>
+					<key>predicate</key>
+					<string>isSystemApplication = TRUE</string>
+				</dict>
+			</array>
+			<key>ALSettingsKeyPrefix</key>
+			<string>dontshow-</string>
+			<key>ALSettingsPath</key>
+			<string>/var/mobile/Library/Preferences/me.conorthedev.playing.prefs.plist</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -120,6 +171,14 @@
 			<string>testNotification:</string>
 			<key>label</key>
 			<string>Test Notification</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>action</key>
+			<string>clearBanners:</string>
+			<key>label</key>
+			<string>Clear Playing Banners</string>
 		</dict>
 	</array>
 	<key>title</key>

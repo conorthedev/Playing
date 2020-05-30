@@ -4,6 +4,7 @@
 
 @interface PLRootListController : HBRootListController
 - (void)testNotification:(id)sender;
+- (void)clearBanners:(id)sender;
 @end
 
 @interface ReturnableTextCell : PSEditableTableCell

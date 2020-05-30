@@ -29,6 +29,11 @@ extern CFStringRef kMRMediaRemoteNowPlayingInfoArtworkDataHeight;
 @property (nonatomic,readonly) NSString *bundleIdentifier;
 @end
 
+@interface SpringBoard : NSObject
++(id)sharedApplication;
+-(SBApplication*)_accessibilityFrontMostApplication;
+@end
+
 @interface SBMediaController : NSObject
 -(SBApplication *)nowPlayingApplication;
 @end
@@ -72,6 +77,7 @@ extern CFStringRef kMRMediaRemoteNowPlayingInfoArtworkDataHeight;
 */
 @interface PlayingNotificationHelper : NSObject
 NS_ASSUME_NONNULL_END
+@property (nonatomic) bool sendingTest;
 @property (nonatomic, strong) BBServer *_Nullable bbServer;
 
 NS_ASSUME_NONNULL_BEGIN

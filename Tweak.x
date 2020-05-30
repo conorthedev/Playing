@@ -18,16 +18,22 @@ void SendTestNotification(CFNotificationCenterRef center, void * observer, CFStr
 -(void)setNowPlayingInfo:(id)arg1 {
 	%orig;
 	if(enabled) {
-		NSString *bundleID = [self nowPlayingApplication].bundleIdentifier;
-		SBApplication *currentApp = [[%c(SpringBoard) sharedApplication] _accessibilityFrontMostApplication];
-
-		if ([[preferences objectForKey:[@"blacklist-" stringByAppendingString:bundleID]] boolValue]) {
-			return;
+		NSString *bundleID = @"";
+		NSString *currentID = @"";
+		
+		if([self nowPlayingApplication]) {
+			bundleID = [self nowPlayingApplication].bundleIdentifier;
 		}
 
-		if(currentApp != NULL || currentApp.bundleIdentifier == NULL || [currentApp.bundleIdentifier isEqualToString:@""]) {
-			if ([[preferences objectForKey:[@"dontshow-" stringByAppendingString:currentApp.bundleIdentifier]] boolValue]) {
-				return;
+		if([[%c(SpringBoard) sharedApplication] _accessibilityFrontMostApplication]) {
+			currentID = [[%c(SpringBoard) sharedApplication] _accessibilityFrontMostApplication].bundleIdentifier;
+		}
+
+		if(bundleID || ![bundleID isEqualToString:@""]) {
+			if(currentID || ![currentID isEqualToString:@""]) {
+				if ([[preferences objectForKey:[@"blacklist-" stringByAppendingString:bundleID]] boolValue] || [[preferences objectForKey:[@"dontshow-" stringByAppendingString:currentID]] boolValue]) {
+					return;
+				}
 			}
 		}
 		

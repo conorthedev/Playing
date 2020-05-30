@@ -13,10 +13,6 @@ void SendTestNotification(CFNotificationCenterRef center, void * observer, CFStr
 	[[PlayingNotificationHelper sharedInstance] submitTestNotification:customText];
 }
 
-void ClearBanners(CFNotificationCenterRef center, void * observer, CFStringRef name, const void * object, CFDictionaryRef userInfo) {
-	[[PlayingNotificationHelper sharedInstance] clearNotifications];
-}
-
 %hook SBMediaController
 
 -(void)setNowPlayingInfo:(id)arg1 {
@@ -35,7 +31,6 @@ void ClearBanners(CFNotificationCenterRef center, void * observer, CFStringRef n
 			}
 		}
 		
-
 		dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 0.75);
     	dispatch_after(delay, dispatch_get_main_queue(), ^(void){
 			MRMediaRemoteGetNowPlayingInfo(dispatch_get_main_queue(), ^(CFDictionaryRef information) {
@@ -101,6 +96,5 @@ static void UpdatePlayingPreferences() {
 	UpdatePlayingPreferences();
 	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)UpdatePlayingPreferences, CFSTR("me.conorthedev.playing/ReloadPrefs"), NULL, kNilOptions);
 	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)SendTestNotification, CFSTR("me.conorthedev.playing/TestNotification"), NULL, kNilOptions);
-	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)ClearBanners, CFSTR("me.conorthedev.playing/ClearBanners"), NULL, kNilOptions);
 }
 

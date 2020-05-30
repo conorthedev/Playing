@@ -60,7 +60,7 @@
 			<key>label</key>
 			<string>More</string>
 			<key>footerText</key>
-			<string>Don't like the vibrations or want to disable it on the lockscreen? Go to Settings > Notifications > Playing to change how they behave.&#xA;If your Playing notifications arent clearing automatically, click 'Clear Playing Banners' to fix that</string>
+			<string>Don't like the vibrations or want to disable it on the lockscreen? Go to Settings > Notifications > Playing to change how they behave.</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -171,14 +171,6 @@
 			<string>testNotification:</string>
 			<key>label</key>
 			<string>Test Notification</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSButtonCell</string>
-			<key>action</key>
-			<string>clearBanners:</string>
-			<key>label</key>
-			<string>Clear Playing Banners</string>
 		</dict>
 	</array>
 	<key>title</key>

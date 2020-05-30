@@ -7,6 +7,7 @@ static HBPreferences *preferences = NULL;
 static NSString *previousTitle = @"";
 
 BOOL enabled;
+BOOL asMediaApp;
 NSString *customText = @"";
 
 void SendTestNotification(CFNotificationCenterRef center, void * observer, CFStringRef name, const void * object, CFDictionaryRef userInfo) {
@@ -43,6 +44,7 @@ void SendTestNotification(CFNotificationCenterRef center, void * observer, CFStr
 				NSMutableDictionary *dict = [(__bridge NSDictionary *)information mutableCopy];
 				[dict setObject:customText forKey:@"customText"];
 				[dict setObject:bundleID forKey:@"bundleID"];
+				[dict setObject:@(asMediaApp) forKey: @"asMediaApp"];
 
 				[[PlayingManager sharedInstance] setMetadata:dict];
 			});
@@ -70,20 +72,20 @@ void SendTestNotification(CFNotificationCenterRef center, void * observer, CFStr
 
 	%orig;
 }
+%end
 
--(void)publishBulletin:(BBBulletin *)bulletin destinations:(unsigned int)arg2 {
-	if(([[[PlayingManager sharedInstance] getCurrentApp] isEqualToString:@""] || ![PlayingNotificationHelper sharedInstance].sendingTest)) {
-		if(![bulletin.sectionID isEqualToString:@"me.conorthedev.playing"]) {
-			return;
-		}
+%hook DDUserNotification 
+- (NSString *)senderIdentifier {
+	NSString *orig = %orig;
+	if(!asMediaApp) {
+		return %orig;
 	}
-
-	bulletin.defaultAction = [%c(BBAction) actionWithLaunchBundleID:[[PlayingManager sharedInstance] getCurrentApp]];
-
-	if([PlayingNotificationHelper sharedInstance].sendingTest) {
-		[PlayingNotificationHelper sharedInstance].sendingTest = ![PlayingNotificationHelper sharedInstance].sendingTest;
+	
+	if([orig isEqualToString:[[PlayingManager sharedInstance] getCurrentApp]]) {
+		return @"me.conorthedev.playing";
+	} else {
+		return orig;
 	}
-	%orig(bulletin, arg2);
 }
 %end
 
@@ -91,16 +93,25 @@ static void UpdatePlayingPreferences() {
 	preferences = [[HBPreferences alloc] initWithIdentifier:@"dev.hyper.playing.prefs"];
     [preferences registerDefaults:@{
         @"enabled": @YES,
+		@"asMediaApp": @NO,
 		@"customText": @""
     }];
 
     [preferences registerBool:&enabled default:YES forKey:@"enabled"];
+	[preferences registerBool:&asMediaApp default:NO forKey:@"asMediaApp"];
 	[preferences registerObject:&customText default:@"" forKey:@"customText"];
 }
 
 %ctor {
+	NSString *shortlookPath = @"/Library/MobileSubstrate/DynamicLibraries/ShortLook.dylib";
+	if ([[NSFileManager defaultManager] fileExistsAtPath:shortlookPath]){
+		dlopen("/Library/MobileSubstrate/DynamicLibraries/ShortLook.dylib", RTLD_LAZY);
+	}
+
 	UpdatePlayingPreferences();
 	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)UpdatePlayingPreferences, CFSTR("me.conorthedev.playing/ReloadPrefs"), NULL, kNilOptions);
 	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)SendTestNotification, CFSTR("me.conorthedev.playing/TestNotification"), NULL, kNilOptions);
+	
+	%init;
 }
 

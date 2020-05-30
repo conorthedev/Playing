@@ -70,6 +70,7 @@ extern dispatch_queue_t __BBServerQueue;
 
     if([_currentDictionary count] == 0 || (![newTitle isEqualToString:@""] && ![[self getSongTitle] isEqualToString:newTitle])) {
         _currentDictionary = dict;
+        self.asMediaApp = [_currentDictionary[@"asMediaApp"] boolValue];
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [[PlayingNotificationHelper sharedInstance] submitNotification:dict[@"customText"]];
         });
@@ -94,53 +95,16 @@ extern dispatch_queue_t __BBServerQueue;
 -(void)submitNotification:(NSString *)messageFormat {
     [self clearNotifications];
 
-    NSString *songTitle = [[PlayingManager sharedInstance] getSongTitle];
-    NSString *songArtist = [[PlayingManager sharedInstance] getArtistName] ?: @"Unknown Artist";
-    NSString *songAlbum = [[PlayingManager sharedInstance] getAlbumName] ?: @"Unknown Album";
-    if(songTitle == NULL) {
-        return;
-    }
+    PlayingManager *manager = [PlayingManager sharedInstance];
+    NSString *songTitle = [manager getSongTitle] ?: @"";
+    NSString *songArtist = [manager getArtistName] ?: @"Unknown Artist";
+    NSString *songAlbum = [manager getAlbumName] ?: @"Unknown Album";
 
     if (![songTitle isEqualToString:@"Loading..."] && ![songTitle isEqualToString:@""] && ![songArtist isEqualToString:@""] && ![songAlbum isEqualToString:@""]) {
-        void *handle = dlopen("/usr/lib/libnotifications.dylib", RTLD_LAZY);
-        if (handle != NULL) {
-            NSString *msg = [NSString stringWithFormat:@"%@ by %@", songTitle, songArtist];
-            if(![messageFormat isEqualToString:@""]) {
-                msg = [messageFormat stringByReplacingOccurrencesOfString:@"@al" withString:songAlbum];
-                msg = [msg stringByReplacingOccurrencesOfString:@"@a" withString:songArtist];
-                msg = [msg stringByReplacingOccurrencesOfString:@"@t" withString:songTitle];
-                msg = [msg stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
-            }
-
-            #pragma clang diagnostic push
-            #pragma clang diagnostic ignored "-Wnonnull"
-            
-            [objc_getClass("CPNotification") showAlertWithTitle:@"Now Playing"
-                            message:msg
-                            userInfo:@{@"" : @""}
-                            badgeCount:0
-                            soundName:NULL
-                            delay:0.00
-                            repeats:NO
-                            bundleId:@"me.conorthedev.playing"];   
-            
-            #pragma clang diagnostic pop                               
-            dlclose(handle);
-        }
-    }
-}
-
--(void)submitTestNotification:(NSString *)messageFormat {
-    self.sendingTest = true;
-    [self clearNotifications];
-
-    NSString *songTitle = @"Title";
-    NSString *songArtist = @"Artist";
-    NSString *songAlbum = @"Album";
-
-    void *handle = dlopen("/usr/lib/libnotifications.dylib", RTLD_LAZY);
-    if (handle != NULL) {    
-        NSString *msg = [NSString stringWithFormat:@"%@ by %@ in %@", songTitle, songArtist, songAlbum];
+        BBBulletin *bulletin = [[objc_getClass("BBBulletin") alloc] init];
+        NSString *bundleID = (manager.asMediaApp) ? ([manager getCurrentApp]) : (@"me.conorthedev.playing");
+        NSString *msg = [NSString stringWithFormat:@"%@ by %@", songTitle, songArtist];
+        
         if(![messageFormat isEqualToString:@""]) {
             msg = [messageFormat stringByReplacingOccurrencesOfString:@"@al" withString:songAlbum];
             msg = [msg stringByReplacingOccurrencesOfString:@"@a" withString:songArtist];
@@ -148,27 +112,62 @@ extern dispatch_queue_t __BBServerQueue;
             msg = [msg stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
         }
 
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wnonnull"
-        
-        [objc_getClass("CPNotification") showAlertWithTitle:@"Now Playing"
-                        message:msg
-                        userInfo:@{@"" : @""}
-                        badgeCount:0
-                        soundName:NULL
-                        delay:0.00
-                        repeats:NO
-                        bundleId:@"me.conorthedev.playing"];   
-        
-        #pragma clang diagnostic pop                               
-        dlclose(handle);
+        bulletin.title = @"Now Playing";
+        bulletin.message = msg;
+        bulletin.sectionID = bundleID;
+        bulletin.bulletinID = [[NSProcessInfo processInfo] globallyUniqueString];
+        bulletin.recordID = [[NSProcessInfo processInfo] globallyUniqueString];
+        bulletin.publisherBulletinID = [[NSProcessInfo processInfo] globallyUniqueString];
+        bulletin.date = [NSDate new];
+        bulletin.defaultAction = [objc_getClass("BBAction") actionWithLaunchBundleID:bundleID];
+
+        dispatch_sync(__BBServerQueue, ^{
+            if(self.bbServer != NULL) {
+                [self.bbServer publishBulletin:bulletin destinations:15];
+            }
+        });        
     }
+}
+
+-(void)submitTestNotification:(NSString *)messageFormat {
+    [self clearNotifications];
+
+    NSString *songTitle = @"Title";
+    NSString *songArtist = @"Artist";
+    NSString *songAlbum = @"Album";
+
+    BBBulletin *bulletin = [[objc_getClass("BBBulletin") alloc] init];
+    NSString *msg = [NSString stringWithFormat:@"%@ by %@", songTitle, songArtist];
+    
+    if(![messageFormat isEqualToString:@""]) {
+        msg = [messageFormat stringByReplacingOccurrencesOfString:@"@al" withString:songAlbum];
+        msg = [msg stringByReplacingOccurrencesOfString:@"@a" withString:songArtist];
+        msg = [msg stringByReplacingOccurrencesOfString:@"@t" withString:songTitle];
+        msg = [msg stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
+    }
+
+    bulletin.title = @"Now Playing";
+    bulletin.message = msg;
+    bulletin.sectionID = @"me.conorthedev.playing";
+    bulletin.bulletinID = [[NSProcessInfo processInfo] globallyUniqueString];
+    bulletin.recordID = [[NSProcessInfo processInfo] globallyUniqueString];
+    bulletin.publisherBulletinID = [[NSProcessInfo processInfo] globallyUniqueString];
+    bulletin.date = [NSDate new];
+    bulletin.defaultAction = [objc_getClass("BBAction") actionWithLaunchBundleID:@"me.conorthedev.playing"];
+
+    dispatch_sync(__BBServerQueue, ^{
+        if(self.bbServer != NULL) {
+            [self.bbServer publishBulletin:bulletin destinations:15];
+        }
+    });        
 }
 
 -(void)clearNotifications {
     dispatch_sync(__BBServerQueue, ^{
         if(self.bbServer != NULL) {
-            [self.bbServer _clearSection:@"me.conorthedev.playing"];
+            PlayingManager *manager = [PlayingManager sharedInstance];
+            NSString *bundleID = (manager.asMediaApp) ? ([manager getCurrentApp]) : (@"me.conorthedev.playing");
+            [self.bbServer _clearSection:bundleID];
         }
 	});
 }

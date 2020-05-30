@@ -11,7 +11,7 @@ Playing_FILES = Tweak.x
 Playing_CFLAGS = -fobjc-arc
 Playing_PRIVATE_FRAMEWORKS = MediaRemote BulletinBoard
 Playing_EXTRA_FRAMEWORKS = Cephei
-Playing_LIBRARIES = MobileGestalt playing
+Playing_LIBRARIES = MobileGestalt playing applist
 
 SUBPROJECTS += libplaying Preferences Application ShortLook
 

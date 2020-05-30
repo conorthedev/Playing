@@ -1,6 +1,7 @@
 #import <Playing/libplaying.h>
 #import <Cephei/HBPreferences.h>
 #import <MediaRemote/MediaRemote.h>
+#import <AppList/AppList.h>
 
 static HBPreferences *preferences = NULL;
 static NSString *previousTitle = @"";
@@ -17,11 +18,17 @@ void SendTestNotification(CFNotificationCenterRef center, void * observer, CFStr
 -(void)setNowPlayingInfo:(id)arg1 {
 	%orig;
 	if(enabled) {
+		NSString *bundleID = [self nowPlayingApplication].bundleIdentifier;
+		if ([[preferences objectForKey:[@"blacklist-" stringByAppendingString:bundleID]] boolValue]) {
+			return;
+		}
+
 		dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 0.75);
     	dispatch_after(delay, dispatch_get_main_queue(), ^(void){
 			MRMediaRemoteGetNowPlayingInfo(dispatch_get_main_queue(), ^(CFDictionaryRef information) {
-        		NSMutableDictionary *dict = [(__bridge NSDictionary *)information mutableCopy];
+				NSMutableDictionary *dict = [(__bridge NSDictionary *)information mutableCopy];
 				[dict setObject:customText forKey:@"customText"];
+				
 				[[PlayingManager sharedInstance] setMetadata:dict];
 			});
 		});
@@ -49,7 +56,6 @@ void SendTestNotification(CFNotificationCenterRef center, void * observer, CFStr
 	%orig;
 }
 %end
-
 
 static void UpdatePlayingPreferences() {
 	preferences = [[HBPreferences alloc] initWithIdentifier:@"me.conorthedev.playing.prefs"];

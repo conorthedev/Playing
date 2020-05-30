@@ -11,6 +11,14 @@ extern CFStringRef kMRMediaRemoteNowPlayingInfoArtworkIdentifier;
 extern CFStringRef kMRMediaRemoteNowPlayingInfoContentItemIdentifier;
 extern CFStringRef kMRMediaRemoteNowPlayingInfoArtworkDataHeight;
 
+@interface SBApplication : NSObject
+@property (nonatomic,readonly) NSString *bundleIdentifier;
+@end
+
+@interface SBMediaController : NSObject
+-(SBApplication *)nowPlayingApplication;
+@end
+
 @interface BBServer : NSObject
 - (void)_clearSection:(id)arg1;
 + (id)savedSectionInfo;

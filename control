@@ -1,6 +1,6 @@
 Package: me.conorthedev.playing
 Name: Playing
-Depends: mobilesubstrate, preferenceloader, com.cokepokes.libnotifications, ws.hbang.common (>= 1.11), firmware (>=12.0)
+Depends: mobilesubstrate, preferenceloader, com.cokepokes.libnotifications, applist, ws.hbang.common (>= 1.11), firmware (>=12.0)
 Version: 1.1.2
 Architecture: iphoneos-arm
 Replaces: dev.hyper.playing

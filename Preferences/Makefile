@@ -9,6 +9,7 @@ PlayingPrefs_FILES = PLRootListController.m
 PlayingPrefs_INSTALL_PATH = /Library/PreferenceBundles
 PlayingPrefs_EXTRA_FRAMEWORKS += Cephei CepheiPrefs
 PlayingPrefs_FRAMEWORKS = UIKit
+PlayingPrefs_LIBRARIES = applist
 PlayingPrefs_PRIVATE_FRAMEWORKS = Preferences
 PlayingPrefs_CFLAGS = -fobjc-arc
 

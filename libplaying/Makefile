@@ -6,14 +6,15 @@ include $(THEOS)/makefiles/common.mk
 
 LIBRARY_NAME = libplaying
 
-libplaying_FILES = libplaying.m
+libplaying_FILES = PlayingManager.m PlayingNotificationManager.m PlayingPreferences.m
 libplaying_CFLAGS = -fobjc-arc
+libplaying_EXTRA_FRAMEWORKS = Cephei
 libplaying_PRIVATE_FRAMEWORKS = MediaRemote BulletinBoard
-libplaying_LIBRARIES = MobileGestalt
 
 include $(THEOS_MAKE_PATH)/library.mk
 
-stage::
+all::
 	mkdir -p $(THEOS)/include/Playing
-	cp -r libplaying.h $(THEOS)/include/Playing
-	cp $(THEOS_STAGING_DIR)/usr/lib/libplaying.dylib $(THEOS)/lib/libplaying.dylib
+	cp -r *.h $(THEOS)/include/Playing
+	cp -r internal $(THEOS)/include/Playing
+	cp .theos/obj/debug/libplaying.dylib $(THEOS)/lib/libplaying.dylib

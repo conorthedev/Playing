@@ -1,19 +1,21 @@
 INSTALL_TARGET_PROCESSES = SpringBoard
 ARCHS = arm64 arm64e
 TARGET = iphone:clang:13.0:12.4
-GO_EASY_ON_ME=1
 
 include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = Playing
 
-Playing_FILES = Tweak.x
-Playing_CFLAGS = -fobjc-arc
-Playing_PRIVATE_FRAMEWORKS = MediaRemote BulletinBoard
-Playing_EXTRA_FRAMEWORKS = Cephei
-Playing_LIBRARIES = MobileGestalt playing applist
+$(TWEAK_NAME)_FILES = Tweak.x
+$(TWEAK_NAME)_CFLAGS = -fobjc-arc
+$(TWEAK_NAME)_PRIVATE_FRAMEWORKS = MediaRemote BulletinBoard
+$(TWEAK_NAME)_EXTRA_FRAMEWORKS = Cephei
+$(TWEAK_NAME)_LIBRARIES = playing applist
 
 SUBPROJECTS += libplaying Preferences Application ShortLook
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 include $(THEOS_MAKE_PATH)/aggregate.mk
+
+before-all::
+	cd libplaying && make && cd ..

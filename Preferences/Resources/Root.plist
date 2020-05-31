@@ -58,7 +58,7 @@
 			<key>label</key>
 			<string>Custom Text</string>
 			<key>footerText</key>
-			<string>For custom title/text, use @a for the artist name and @t for the song title and @al for the album, add \n to create a line break (custom text only)</string>
+			<string>For custom text, use @a for the artist name and @t for the song title and @al for the album, add \n to create a line break (custom text only)</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -90,7 +90,7 @@
 			<key>key</key>
 			<string>customText</string>
 			<key>label</key>
-			<string>Custom Text</string>
+			<string>Custom Message</string>
 			<key>placeholder</key>
 			<string>Leave blank for default</string>
 			<key>PostNotification</key>

@@ -1,126 +1,95 @@
 #import <Playing/libplaying.h>
-#import <Cephei/HBPreferences.h>
-#import <MediaRemote/MediaRemote.h>
 #import <AppList/AppList.h>
+#import <MediaRemote/MediaRemote.h>
 
-static HBPreferences *preferences = NULL;
+static PlayingNotificationManager *notificationManager;
+static PlayingManager *manager;
+static PlayingPreferences *preferences;
 
-BOOL enabled;
-BOOL asMediaApp;
-NSString *customText = @"";
-NSString *customTitle = @"";
-double autoclearInterval;
-
-void SendTestNotification(CFNotificationCenterRef center, void * observer, CFStringRef name, const void * object, CFDictionaryRef userInfo) {
-	[[PlayingNotificationHelper sharedInstance] submitTestNotification:customText titleFormat:customTitle];
-}
-
+%group MediaControllerHook
 %hook SBMediaController
+-(void)_setNowPlayingApplication:(SBApplication*)arg1 {
+	%orig;
+	manager.currentApp = arg1.bundleIdentifier;
+}
 
 -(void)setNowPlayingInfo:(id)arg1 {
 	%orig;
-	if(enabled) {
+
+	if(preferences.enabled) {
 		dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 0.75);
     	dispatch_after(delay, dispatch_get_main_queue(), ^(void){
-			MRMediaRemoteGetNowPlayingInfo(dispatch_get_main_queue(), ^(CFDictionaryRef information) {
-				NSString *bundleID = @"";
+			MRMediaRemoteGetNowPlayingInfo(dispatch_get_main_queue(), ^(CFDictionaryRef information) {				
 				NSString *currentID = @"";
-				
-				if([self nowPlayingApplication]) {
-					bundleID = [self nowPlayingApplication].bundleIdentifier;
-				}
-
 				if([[%c(SpringBoard) sharedApplication] _accessibilityFrontMostApplication]) {
 					currentID = [[%c(SpringBoard) sharedApplication] _accessibilityFrontMostApplication].bundleIdentifier;
 				}
 
-				if(bundleID || ![bundleID isEqualToString:@""]) {
-					if(currentID || ![currentID isEqualToString:@""]) {
-						if ([[preferences objectForKey:[@"blacklist-" stringByAppendingString:bundleID]] boolValue] || [[preferences objectForKey:[@"dontshow-" stringByAppendingString:currentID]] boolValue]) {
-							return;
-						}
+				if(manager.currentApp && ![manager.currentApp isEqualToString:@""] && currentID && ![currentID isEqualToString:@""]) {
+					if ([[preferences.preferences objectForKey:[@"blacklist-" stringByAppendingString:manager.currentApp]] boolValue] || 
+						[[preferences.preferences objectForKey:[@"dontshow-" stringByAppendingString:currentID]] boolValue]) {
+						return;
 					}
 				}
 				
-				NSMutableDictionary *dict = [(__bridge NSDictionary *)information mutableCopy];
-				[dict setObject:customTitle forKey:@"customTitle"];
-				[dict setObject:customText forKey:@"customText"];
-				[dict setObject:bundleID forKey:@"bundleID"];
-				[dict setObject:@(asMediaApp) forKey: @"asMediaApp"];
-
-				[[PlayingManager sharedInstance] setMetadata:dict];
+				[manager setMetadata:(__bridge NSDictionary *)information];
 			});
 		});
 	}
 }
-
+%end
 %end
 
+%group BBServerManager
 %hook BBServer
 -(id)initWithQueue:(id)arg1 {
-    [PlayingNotificationHelper sharedInstance].bbServer = %orig;
-    return [PlayingNotificationHelper sharedInstance].bbServer;
+    notificationManager.bbServer = %orig;
+    return notificationManager.bbServer;
 }
 
 -(id)initWithQueue:(id)arg1 dataProviderManager:(id)arg2 syncService:(id)arg3 dismissalSyncCache:(id)arg4 observerListener:(id)arg5 utilitiesListener:(id)arg6 conduitListener:(id)arg7 systemStateListener:(id)arg8 settingsListener:(id)arg9 {
-    [PlayingNotificationHelper sharedInstance].bbServer = %orig;
-    return [PlayingNotificationHelper sharedInstance].bbServer;
+    notificationManager.bbServer = %orig;
+    return notificationManager.bbServer;
 }
 
 - (void)dealloc {
-	if ([PlayingNotificationHelper sharedInstance].bbServer == self) {
-		[PlayingNotificationHelper sharedInstance].bbServer = NULL;
+	if (notificationManager.bbServer == self) {
+		notificationManager.bbServer = NULL;
 	}
 
 	%orig;
 }
 %end
+%end
 
+%group ShortLookFixer
 %hook DDUserNotification 
 - (NSString *)senderIdentifier {
 	NSString *orig = %orig;
-	if(!asMediaApp) {
-		return %orig;
+	if(!preferences.asMediaApp) {
+		return orig;
 	}
 
-	if([orig isEqualToString:[[PlayingManager sharedInstance] getCurrentApp]]) {
+	if([orig isEqualToString:manager.currentApp]) {
 		return @"me.conorthedev.playing";
 	} else {
 		return orig;
 	}
 }
 %end
-
-static void UpdatePlayingPreferences() {
-	preferences = [[HBPreferences alloc] initWithIdentifier:@"dev.hyper.playing.prefs"];
-    [preferences registerDefaults:@{
-        @"enabled": @YES,
-		@"asMediaApp": @NO,
-		@"customText": @"",
-		@"customTitle": @"",
-		@"autoclearInterval": @0
-    }];
-
-    [preferences registerBool:&enabled default:YES forKey:@"enabled"];
-	[preferences registerBool:&asMediaApp default:NO forKey:@"asMediaApp"];
-	[preferences registerObject:&customText default:@"" forKey:@"customText"];
-	[preferences registerObject:&customTitle default:@"" forKey:@"customTitle"];
-	[preferences registerDouble:&autoclearInterval default:0 forKey:@"autoclearInterval"];
-
-	[PlayingNotificationHelper sharedInstance].interval = autoclearInterval;
-}
+%end
 
 %ctor {
-	[PlayingNotificationHelper sharedInstance];
+	notificationManager = [PlayingNotificationManager sharedInstance];
+	manager = [PlayingManager sharedInstance];
+	preferences = [PlayingPreferences sharedInstance];
+
 	NSString *shortlookPath = @"/Library/MobileSubstrate/DynamicLibraries/ShortLook.dylib";
 	if ([[NSFileManager defaultManager] fileExistsAtPath:shortlookPath]){
 		dlopen("/Library/MobileSubstrate/DynamicLibraries/ShortLook.dylib", RTLD_LAZY);
+		%init(ShortLookFixer);
 	}
-
-	UpdatePlayingPreferences();
-	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)UpdatePlayingPreferences, CFSTR("me.conorthedev.playing/ReloadPrefs"), NULL, kNilOptions);
-	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)SendTestNotification, CFSTR("me.conorthedev.playing/TestNotification"), NULL, kNilOptions);
 	
-	%init;
+	%init(BBServerManager);
+	%init(MediaControllerHook);
 }
-

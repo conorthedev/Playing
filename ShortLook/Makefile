@@ -8,6 +8,7 @@ $(BUNDLE_NAME)_CFLAGS = -fobjc-arc
 $(BUNDLE_NAME)_FILES = $(wildcard *.m)
 $(BUNDLE_NAME)_FRAMEWORKS = UIKit
 $(BUNDLE_NAME)_LIBRARIES = playing
+$(BUNDLE_NAME)_EXTRA_FRAMEWORKS = Cephei
 $(BUNDLE_NAME)_INSTALL_PATH = /Library/Dynastic/ShortLook/Plugins/ContactPhotoProviders
 
 include $(THEOS_MAKE_PATH)/bundle.mk

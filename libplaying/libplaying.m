@@ -72,7 +72,7 @@ extern dispatch_queue_t __BBServerQueue;
         _currentDictionary = dict;
         self.asMediaApp = [_currentDictionary[@"asMediaApp"] boolValue];
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [[PlayingNotificationHelper sharedInstance] submitNotification:dict[@"customText"]];
+            [[PlayingNotificationHelper sharedInstance] submitNotification:dict[@"customText"] titleFormat:dict[@"customTitle"]];
         });
     }
 }
@@ -92,7 +92,17 @@ extern dispatch_queue_t __BBServerQueue;
     return [PlayingNotificationHelper sharedInstance];
 }
 
--(void)submitNotification:(NSString *)messageFormat {
+-(void)submitNotification:(NSString *)messageFormat titleFormat:(NSString *)titleFormat {
+    if(self.clearTimer) {
+        [self.clearTimer invalidate];
+    }
+    
+    if(self.interval != 0) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.clearTimer = [NSTimer scheduledTimerWithTimeInterval:self.interval target:self selector:@selector(clearNotifications) userInfo:nil repeats:NO];
+        });
+    }
+
     [self clearNotifications];
 
     PlayingManager *manager = [PlayingManager sharedInstance];
@@ -104,7 +114,8 @@ extern dispatch_queue_t __BBServerQueue;
         BBBulletin *bulletin = [[objc_getClass("BBBulletin") alloc] init];
         NSString *bundleID = (manager.asMediaApp) ? ([manager getCurrentApp]) : (@"me.conorthedev.playing");
         NSString *msg = [NSString stringWithFormat:@"%@ by %@", songTitle, songArtist];
-        
+        NSString *title = [NSString stringWithFormat:@"Now Playing"];
+
         if(![messageFormat isEqualToString:@""]) {
             msg = [messageFormat stringByReplacingOccurrencesOfString:@"@al" withString:songAlbum];
             msg = [msg stringByReplacingOccurrencesOfString:@"@a" withString:songArtist];
@@ -112,7 +123,13 @@ extern dispatch_queue_t __BBServerQueue;
             msg = [msg stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
         }
 
-        bulletin.title = @"Now Playing";
+        if(![titleFormat isEqualToString:@""]) {
+            title = [titleFormat stringByReplacingOccurrencesOfString:@"@al" withString:songAlbum];
+            title = [titleFormat stringByReplacingOccurrencesOfString:@"@a" withString:songArtist];
+            title = [titleFormat stringByReplacingOccurrencesOfString:@"@t" withString:songTitle];
+        }
+
+        bulletin.title = title;
         bulletin.message = msg;
         bulletin.sectionID = bundleID;
         bulletin.bulletinID = [[NSProcessInfo processInfo] globallyUniqueString];
@@ -129,7 +146,7 @@ extern dispatch_queue_t __BBServerQueue;
     }
 }
 
--(void)submitTestNotification:(NSString *)messageFormat {
+-(void)submitTestNotification:(NSString *)messageFormat titleFormat:(NSString *)titleFormat {
     [self clearNotifications];
 
     NSString *songTitle = @"Title";
@@ -138,7 +155,8 @@ extern dispatch_queue_t __BBServerQueue;
 
     BBBulletin *bulletin = [[objc_getClass("BBBulletin") alloc] init];
     NSString *msg = [NSString stringWithFormat:@"%@ by %@", songTitle, songArtist];
-    
+    NSString *title = [NSString stringWithFormat:@"Now Playing"];
+
     if(![messageFormat isEqualToString:@""]) {
         msg = [messageFormat stringByReplacingOccurrencesOfString:@"@al" withString:songAlbum];
         msg = [msg stringByReplacingOccurrencesOfString:@"@a" withString:songArtist];
@@ -146,7 +164,13 @@ extern dispatch_queue_t __BBServerQueue;
         msg = [msg stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
     }
 
-    bulletin.title = @"Now Playing";
+    if(![titleFormat isEqualToString:@""]) {
+        title = [titleFormat stringByReplacingOccurrencesOfString:@"@al" withString:songAlbum];
+        title = [titleFormat stringByReplacingOccurrencesOfString:@"@a" withString:songArtist];
+        title = [titleFormat stringByReplacingOccurrencesOfString:@"@t" withString:songTitle];
+    }
+
+    bulletin.title = title;
     bulletin.message = msg;
     bulletin.sectionID = @"me.conorthedev.playing";
     bulletin.bulletinID = [[NSProcessInfo processInfo] globallyUniqueString];

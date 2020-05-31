@@ -8,9 +8,11 @@ static HBPreferences *preferences = NULL;
 BOOL enabled;
 BOOL asMediaApp;
 NSString *customText = @"";
+NSString *customTitle = @"";
+double autoclearInterval;
 
 void SendTestNotification(CFNotificationCenterRef center, void * observer, CFStringRef name, const void * object, CFDictionaryRef userInfo) {
-	[[PlayingNotificationHelper sharedInstance] submitTestNotification:customText];
+	[[PlayingNotificationHelper sharedInstance] submitTestNotification:customText titleFormat:customTitle];
 }
 
 %hook SBMediaController
@@ -41,6 +43,7 @@ void SendTestNotification(CFNotificationCenterRef center, void * observer, CFStr
 				}
 				
 				NSMutableDictionary *dict = [(__bridge NSDictionary *)information mutableCopy];
+				[dict setObject:customTitle forKey:@"customTitle"];
 				[dict setObject:customText forKey:@"customText"];
 				[dict setObject:bundleID forKey:@"bundleID"];
 				[dict setObject:@(asMediaApp) forKey: @"asMediaApp"];
@@ -93,15 +96,22 @@ static void UpdatePlayingPreferences() {
     [preferences registerDefaults:@{
         @"enabled": @YES,
 		@"asMediaApp": @NO,
-		@"customText": @""
+		@"customText": @"",
+		@"customTitle": @"",
+		@"autoclearInterval": @0
     }];
 
     [preferences registerBool:&enabled default:YES forKey:@"enabled"];
 	[preferences registerBool:&asMediaApp default:NO forKey:@"asMediaApp"];
 	[preferences registerObject:&customText default:@"" forKey:@"customText"];
+	[preferences registerObject:&customTitle default:@"" forKey:@"customTitle"];
+	[preferences registerDouble:&autoclearInterval default:0 forKey:@"autoclearInterval"];
+
+	[PlayingNotificationHelper sharedInstance].interval = autoclearInterval;
 }
 
 %ctor {
+	[PlayingNotificationHelper sharedInstance];
 	NSString *shortlookPath = @"/Library/MobileSubstrate/DynamicLibraries/ShortLook.dylib";
 	if ([[NSFileManager defaultManager] fileExistsAtPath:shortlookPath]){
 		dlopen("/Library/MobileSubstrate/DynamicLibraries/ShortLook.dylib", RTLD_LAZY);

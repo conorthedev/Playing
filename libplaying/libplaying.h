@@ -177,13 +177,14 @@ extern CFStringRef kMRMediaRemoteNowPlayingInfoArtworkDataHeight;
 @interface PlayingNotificationHelper : NSObject
 NS_ASSUME_NONNULL_END
 @property (nonatomic, strong) BBServer *_Nullable bbServer;
-
 NS_ASSUME_NONNULL_BEGIN
+@property (nonatomic, strong) NSTimer *clearTimer;
+@property double interval;
 + (instancetype)sharedInstance;
 + (instancetype)init;
 
--(void)submitNotification:(NSString *)messageFormat;
--(void)submitTestNotification:(NSString *)messageFormat;
+-(void)submitNotification:(NSString *)messageFormat titleFormat:(NSString *)titleFormat;
+-(void)submitTestNotification:(NSString *)messageFormat titleFormat:(NSString *)titleFormat;
 -(void)clearNotifications;
 NS_ASSUME_NONNULL_END
 @end

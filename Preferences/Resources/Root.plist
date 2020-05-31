@@ -12,7 +12,9 @@
 			<key>packageIdentifier</key>
 			<string>dev.hyper.playing</string>
 			<key>icon</key>
-			<string>AppIcon40x40.png</string>
+			<string>AppIcon29x29.png</string>
+			<key>condensed</key>
+			<true/>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -20,7 +22,7 @@
 			<key>label</key>
 			<string>Configuration</string>
 			<key>footerText</key>
-			<string>For custom notification text, use @a for the artist name and @t for the song title and @al for the album, add \n to create a line break</string>
+			<string>Undercover Mode sends the notification as the app that is playing music</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -46,7 +48,33 @@
 			<key>key</key>
 			<string>asMediaApp</string>
 			<key>label</key>
-			<string>Send notifications as Media App</string>
+			<string>Undercover Mode</string>
+			<key>PostNotification</key>
+			<string>me.conorthedev.playing/ReloadPrefs</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Custom Text</string>
+			<key>footerText</key>
+			<string>For custom title/text, use @a for the artist name and @t for the song title and @al for the album, add \n to create a line break (custom text only)</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>cellClass</key>
+			<string>ReturnableTextCell</string>
+			<key>defaults</key>
+			<string>dev.hyper.playing.prefs</string>
+			<key>detail</key>
+			<string>PSDetailController</string>
+			<key>key</key>
+			<string>customTitle</string>
+			<key>label</key>
+			<string>Custom Title</string>
+			<key>placeholder</key>
+			<string>Leave blank for default</string>
 			<key>PostNotification</key>
 			<string>me.conorthedev.playing/ReloadPrefs</string>
 		</dict>
@@ -66,6 +94,32 @@
 			<key>placeholder</key>
 			<string>Leave blank for default</string>
 			<key>PostNotification</key>
+			<string>me.conorthedev.playing/ReloadPrefs</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Auto-clear (seconds)</string>
+			<key>footerText</key>
+			<string>Removes the current notification from the notification list after a period of time.</string>
+		</dict>
+		<dict>
+			<key>cell</key> 					
+			<string>PSSliderCell</string>
+			<key>default</key> 					
+			<real>0</real>
+			<key>defaults</key> 				
+			<string>dev.hyper.playing.prefs</string>
+			<key>key</key> 						
+			<string>autoclearInterval</string>
+			<key>min</key> 						
+			<real>0</real>
+			<key>max</key> 						
+			<real>60</real>
+			<key>showValue</key> 				
+			<true/>
+			<key>PostNotification</key> 		
 			<string>me.conorthedev.playing/ReloadPrefs</string>
 		</dict>
 		<dict>

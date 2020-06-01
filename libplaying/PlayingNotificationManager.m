@@ -96,7 +96,12 @@ extern dispatch_queue_t __BBServerQueue;
         title = [title stringByReplacingOccurrencesOfString:@"@a" withString:songArtist];
         title = [title stringByReplacingOccurrencesOfString:@"@t" withString:songTitle];
     }
-
+    
+    /*[self saveImage:[self.manager getArtwork]];
+    NSBundle *bulletinBoard = [NSBundle bundleWithPath:@"/System/Library/PrivateFrameworks/BulletinBoard.framework"];
+    [bulletinBoard load];
+    
+    BBAttachmentMetadata *attach = [[NSClassFromString(@"BBAttachmentMetadata") alloc] _initWithUUID:[NSUUID UUID] type:1 URL:[NSURL fileURLWithPath:@"/Applications/PlayingApp.app/AppIcon76x76.png"]];*/
     BBBulletin *bulletin = [[objc_getClass("BBBulletin") alloc] init];
     bulletin.title = title;
     bulletin.message = msg;
@@ -106,6 +111,7 @@ extern dispatch_queue_t __BBServerQueue;
     bulletin.publisherBulletinID = [[NSProcessInfo processInfo] globallyUniqueString];
     bulletin.date = [NSDate new];
     bulletin.defaultAction = [objc_getClass("BBAction") actionWithLaunchBundleID:self.manager.currentApp];
+    //bulletin.primaryAttachment = attach;
 
     dispatch_sync(__BBServerQueue, ^{
         if(self.bbServer != NULL) {
@@ -121,6 +127,13 @@ extern dispatch_queue_t __BBServerQueue;
             [self.bbServer _clearSection:bundleID];
         }
 	});
+}
+
+-(void)saveImage:(UIImage*)image {
+    NSData *data = UIImageJPEGRepresentation(image, 1.0);
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSString *fullPath = @"/var/mobile/Documents/artwork.jpeg";
+    [fileManager createFileAtPath:fullPath contents:data attributes:nil];
 }
 
 @end

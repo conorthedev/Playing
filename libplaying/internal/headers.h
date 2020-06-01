@@ -37,6 +37,32 @@ extern CFStringRef kMRMediaRemoteNowPlayingInfoArtworkDataHeight;
 -(SBApplication *)nowPlayingApplication;
 @end
 
+@interface BBAttachmentMetadata : NSObject <NSCopying, NSMutableCopying, NSSecureCoding> {
+
+	NSUUID* _UUID;
+	long long _type;
+	NSURL* _URL;
+}
+@property (nonatomic,copy) NSUUID * UUID;              //@synthesize UUID=_UUID - In the implementation block
+@property (nonatomic) long long type;                  //@synthesize type=_type - In the implementation block
+@property (nonatomic,copy) NSURL * URL;                //@synthesize URL=_URL - In the implementation block
++(BOOL)supportsSecureCoding;
+-(id)init;
+-(BOOL)isEqual:(id)arg1 ;
+-(unsigned long long)hash;
+-(id)description;
+-(id)copyWithZone:(NSZone*)arg1 ;
+-(id)mutableCopyWithZone:(NSZone*)arg1 ;
+-(long long)type;
+-(void)encodeWithCoder:(id)arg1 ;
+-(id)initWithCoder:(id)arg1 ;
+-(NSUUID *)UUID;
+-(NSURL *)URL;
+-(BOOL)hasContentModificationsRelativeTo:(id)arg1 ;
+-(id)_initWithUUID:(id)arg1 type:(long long)arg2 URL:(id)arg3 ;
+@end
+
+
 @interface BBBulletin : NSObject
 @property (nonatomic, copy) BBAction *acknowledgeAction;
 @property (nonatomic, retain) NSMutableDictionary *actions;
@@ -59,6 +85,7 @@ extern CFStringRef kMRMediaRemoteNowPlayingInfoArtworkDataHeight;
 @property (nonatomic, copy) NSString *categoryID;
 @property (nonatomic) bool clearable;
 @property (nonatomic, readonly) bool coalescesWhenLocked;
+@property (nonatomic) long long primaryAttachmentType;
 @property (nonatomic) long long contentPreviewSetting;
 @property (nonatomic, retain) NSDictionary *context;
 @property (nonatomic) unsigned long long counter;
@@ -98,7 +125,7 @@ extern CFStringRef kMRMediaRemoteNowPlayingInfoArtworkDataHeight;
 @property (nonatomic, readonly) bool preservesUnlockActionCase;
 @property (nonatomic) bool preventAutomaticRemovalFromLockScreen;
 @property (nonatomic, readonly) bool preventLock;
-//@property (nonatomic, copy) BBAttachmentMetadata *primaryAttachment;
+@property (nonatomic, copy) BBAttachmentMetadata *primaryAttachment;
 @property (nonatomic, readonly) bool prioritizeAtTopOfLockScreen;
 @property (nonatomic, readonly) unsigned long long privacySettings;
 @property (nonatomic, retain) NSDate *publicationDate;

@@ -62,6 +62,23 @@ static PlayingPreferences *preferences;
 %end
 %end
 
+%group ShortLookFixer
+%hook DDUserNotification 
+- (NSString *)senderIdentifier {
+	NSString *orig = %orig;
+	if(!preferences.asMediaApp) {
+		return orig;
+	}
+
+	if([orig isEqualToString:manager.currentApp]) {
+		return @"me.conorthedev.playing";
+	} else {
+		return orig;
+	}
+}
+%end
+%end
+
 %ctor {
 	notificationManager = [PlayingNotificationManager sharedInstance];
 	manager = [PlayingManager sharedInstance];

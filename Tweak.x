@@ -21,8 +21,10 @@ static PlayingPreferences *preferences;
     	dispatch_after(delay, dispatch_get_main_queue(), ^(void){
 			MRMediaRemoteGetNowPlayingInfo(dispatch_get_main_queue(), ^(CFDictionaryRef information) {				
 				NSString *currentID = @"";
-				if([[%c(SpringBoard) sharedApplication] _accessibilityFrontMostApplication]) {
-					currentID = [[%c(SpringBoard) sharedApplication] _accessibilityFrontMostApplication].bundleIdentifier;
+				SBApplication *currentApplication = [[%c(SpringBoard) sharedApplication] _accessibilityFrontMostApplication];
+				
+				if(currentApplication) {
+					currentID = currentApplication.bundleIdentifier;
 				}
 
 				if(manager.currentApp && ![manager.currentApp isEqualToString:@""] && currentID && ![currentID isEqualToString:@""]) {
@@ -86,7 +88,7 @@ static PlayingPreferences *preferences;
 
 	NSString *shortlookPath = @"/Library/MobileSubstrate/DynamicLibraries/ShortLook.dylib";
 	if ([[NSFileManager defaultManager] fileExistsAtPath:shortlookPath]){
-		dlopen("/Library/MobileSubstrate/DynamicLibraries/ShortLook.dylib", RTLD_LAZY);
+		dlopen([shortlookPath UTF8String], RTLD_LAZY);
 		%init(ShortLookFixer);
 	}
 	

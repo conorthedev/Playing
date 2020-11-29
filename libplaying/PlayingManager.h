@@ -14,6 +14,7 @@
 -(NSString *)getSongTitle;
 -(NSString *)getArtistName;
 -(NSString *)getAlbumName;
+-(bool)shouldShowBanner;
 
 -(void)setMetadata:(NSDictionary *)dict;
 @end

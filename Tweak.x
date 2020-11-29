@@ -27,14 +27,18 @@ static PlayingPreferences *preferences;
 					currentID = currentApplication.bundleIdentifier;
 				}
 
+				bool showBanner = true;
 				if(manager.currentApp && ![manager.currentApp isEqualToString:@""] && currentID && ![currentID isEqualToString:@""]) {
-					if ([[preferences.preferences objectForKey:[@"blacklist-" stringByAppendingString:manager.currentApp]] boolValue] || 
-						[[preferences.preferences objectForKey:[@"dontshow-" stringByAppendingString:currentID]] boolValue]) {
+					if ([[preferences.preferences objectForKey:[@"blacklist-" stringByAppendingString:manager.currentApp]] boolValue]) {
 						return;
 					}
+
+					showBanner = ![[preferences.preferences objectForKey:[@"dontshow-" stringByAppendingString:currentID]] boolValue];
 				}
 				
-				[manager setMetadata:(__bridge NSDictionary *)information];
+				NSMutableDictionary *mutableInformation = [(__bridge NSDictionary *)information mutableCopy];
+				[mutableInformation setValue:[NSNumber numberWithBool:showBanner] forKey:@"showBanner"];
+				[manager setMetadata:mutableInformation];
 			});
 		});
 	}

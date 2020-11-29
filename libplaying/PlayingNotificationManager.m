@@ -28,6 +28,7 @@ extern dispatch_queue_t __BBServerQueue;
     NSString *songTitle = [self.manager getSongTitle] ?: @"";
     NSString *songArtist = [self.manager getArtistName] ?: @"Unknown Artist";
     NSString *songAlbum = [self.manager getAlbumName] ?: @"Unknown Album";
+    bool showBanner = [self.manager shouldShowBanner];
 
     [self clearNotifications];
 
@@ -68,7 +69,9 @@ extern dispatch_queue_t __BBServerQueue;
 
         dispatch_sync(__BBServerQueue, ^{
             if(self.bbServer != NULL) {
-                [self.bbServer publishBulletin:bulletin destinations:15];
+                // 4 = to lockscreen
+                // 15 = banner and vibration things
+                [self.bbServer publishBulletin:bulletin destinations:(showBanner == true ? 15 : 4)];
             }
         });       
     }

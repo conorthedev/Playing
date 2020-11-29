@@ -57,6 +57,14 @@ extern dispatch_queue_t __BBServerQueue;
     return [_currentDictionary objectForKey:(__bridge NSString *)kMRMediaRemoteNowPlayingInfoAlbum];
 }
 
+-(bool)shouldShowBanner {
+    if([_currentDictionary count] == 0) {
+        return true;
+    }
+
+    return [[_currentDictionary objectForKey:@"showBanner"] boolValue];
+}
+
 -(void)setMetadata:(NSDictionary *)dict {
     NSString *newTitle = [dict objectForKey:(__bridge NSString *)kMRMediaRemoteNowPlayingInfoTitle];
 

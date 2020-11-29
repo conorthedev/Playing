@@ -1,10 +1,9 @@
-#import <Playing/libplaying.h>
-#import <AppList/AppList.h>
-#import <MediaRemote/MediaRemote.h>
+#import "Tweak.h"
 
 static PlayingNotificationManager *notificationManager;
 static PlayingManager *manager;
 static PlayingPreferences *preferences;
+static MediaControlsViewController *currentView;
 
 %group MediaControllerHook
 %hook SBMediaController
@@ -39,6 +38,8 @@ static PlayingPreferences *preferences;
 				NSMutableDictionary *mutableInformation = [(__bridge NSDictionary *)information mutableCopy];
 				[mutableInformation setValue:[NSNumber numberWithBool:showBanner] forKey:@"showBanner"];
 				[manager setMetadata:mutableInformation];
+
+				[currentView applyPlaying];
 			});
 		});
 	}
@@ -85,6 +86,49 @@ static PlayingPreferences *preferences;
 %end
 %end
 
+%group ColouredControls
+%hook MediaControlsViewController
+
+-(void)loadView {
+	%orig;
+	[self applyPlaying];
+}
+
+-(void)viewWillAppear:(BOOL)animated {
+    %orig;
+	[self applyPlaying];
+}
+
+-(void)viewDidDisappear:(BOOL)animated {
+	%orig;
+	currentView = nil;
+}
+
+%new
+-(void)applyPlaying {
+	MediaControlsViewController *typedSelf = ((MediaControlsViewController *) self);
+
+	if ([preferences colouredControls]) {
+		typedSelf.view.superview.layer.cornerRadius = 13;
+    	typedSelf.view.superview.layer.masksToBounds = TRUE;
+
+		UIImage *artwork = [manager getArtwork];
+		UIColor *backgroundColor = (artwork != nil) ? [artwork getAverageColor] : [UIColor clearColor];
+		[UIView animateWithDuration:0.2f animations:^{
+   			typedSelf.view.superview.backgroundColor = backgroundColor;
+		}];
+	} else {
+		[UIView animateWithDuration:0.2f animations:^{
+   			typedSelf.view.superview.backgroundColor = [UIColor clearColor];
+		}];
+	}
+
+	currentView = self;
+}
+
+%end
+%end
+
 %ctor {
 	notificationManager = [PlayingNotificationManager sharedInstance];
 	manager = [PlayingManager sharedInstance];
@@ -98,4 +142,11 @@ static PlayingPreferences *preferences;
 	
 	%init(BBServerManager);
 	%init(MediaControllerHook);
+
+	NSString *mediaControlsControllerClass = @"SBDashboardMediaControlsViewController";
+	if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"13.0")) {
+		mediaControlsControllerClass = @"CSMediaControlsViewController";
+	}
+
+	%init(ColouredControls, MediaControlsViewController = NSClassFromString(mediaControlsControllerClass));
 }

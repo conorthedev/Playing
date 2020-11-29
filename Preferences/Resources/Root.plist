@@ -56,6 +56,28 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
+			<string></string>
+			<key>footerText</key>
+			<string>This sets the background colour of the media controls to the same colour as the album art (experimental)</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>dev.hyper.playing.prefs</string>
+			<key>key</key>
+			<string>colouredControls</string>
+			<key>label</key>
+			<string>Colourise Media Controls</string>
+			<key>PostNotification</key>
+			<string>me.conorthedev.playing/ReloadPrefs</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
 			<string>Custom Text</string>
 			<key>footerText</key>
 			<string>For custom text, use @a for the artist name and @t for the song title and @al for the album, add \n to create a line break (custom message only)</string>

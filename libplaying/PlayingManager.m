@@ -74,6 +74,9 @@ extern dispatch_queue_t __BBServerQueue;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [[PlayingNotificationManager sharedInstance] submitNotification];
         });
+    } else {
+        // Still update the dictionary incase something like album art is resolved
+        _currentDictionary = dict;
     }
 }
 @end

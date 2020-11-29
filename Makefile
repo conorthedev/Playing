@@ -6,7 +6,7 @@ include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = Playing
 
-$(TWEAK_NAME)_FILES = Tweak.x
+$(TWEAK_NAME)_FILES = Tweak.x Playing+UIImage.m
 $(TWEAK_NAME)_CFLAGS = -fobjc-arc -Wno-deprecated-declarations
 $(TWEAK_NAME)_PRIVATE_FRAMEWORKS = MediaRemote BulletinBoard
 $(TWEAK_NAME)_EXTRA_FRAMEWORKS = Cephei

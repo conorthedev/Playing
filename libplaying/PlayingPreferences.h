@@ -11,6 +11,7 @@
 @property (nonatomic) double interval;
 @property (nonatomic, strong) NSString *customText;
 @property (nonatomic, strong) NSString *customTitle;
+@property (nonatomic) bool colouredControls;
 
 -(void)updatePreferences;
 @end

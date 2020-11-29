@@ -17,4 +17,4 @@ all::
 	mkdir -p $(THEOS)/include/Playing
 	cp -r *.h $(THEOS)/include/Playing
 	cp -r internal $(THEOS)/include/Playing
-	cp .theos/obj/debug/libplaying.dylib $(THEOS)/lib/libplaying.dylib
+	cp ../.theos/obj/debug/libplaying.dylib $(THEOS)/lib/libplaying.dylib

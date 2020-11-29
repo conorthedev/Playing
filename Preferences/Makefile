@@ -11,7 +11,7 @@ PlayingPrefs_EXTRA_FRAMEWORKS += Cephei CepheiPrefs
 PlayingPrefs_FRAMEWORKS = UIKit
 PlayingPrefs_LIBRARIES = applist
 PlayingPrefs_PRIVATE_FRAMEWORKS = Preferences
-PlayingPrefs_CFLAGS = -fobjc-arc
+PlayingPrefs_CFLAGS = -fobjc-arc -Wno-deprecated-declarations
 
 include $(THEOS_MAKE_PATH)/bundle.mk
 

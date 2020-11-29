@@ -1,5 +1,7 @@
 #import "Tweak.h"
 
+bool shortlookInstalled = false;
+
 static PlayingNotificationManager *notificationManager;
 static PlayingManager *manager;
 static PlayingPreferences *preferences;
@@ -16,7 +18,7 @@ static MediaControlsViewController *currentView;
 	%orig;
 
 	if(preferences.enabled) {
-		dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 0.75);
+		dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, shortlookInstalled ? (NSEC_PER_SEC * 0.75) : 0);
     	dispatch_after(delay, dispatch_get_main_queue(), ^(void){
 			MRMediaRemoteGetNowPlayingInfo(dispatch_get_main_queue(), ^(CFDictionaryRef information) {				
 				NSString *currentID = @"";
@@ -145,6 +147,8 @@ void PlayingPreferencesUpdated(CFNotificationCenterRef center, void *observer, C
 
 	NSString *shortlookPath = @"/Library/MobileSubstrate/DynamicLibraries/ShortLook.dylib";
 	if ([[NSFileManager defaultManager] fileExistsAtPath:shortlookPath]){
+		shortlookInstalled = true;
+
 		dlopen([shortlookPath UTF8String], RTLD_LAZY);
 		%init(ShortLookFixer);
 	}

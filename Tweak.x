@@ -115,7 +115,7 @@ static MediaControlsViewController *currentView;
 		UIImage *artwork = [manager getArtwork];
 		UIColor *backgroundColor = (artwork != nil) ? [artwork getAverageColor] : [UIColor clearColor];
 		[UIView animateWithDuration:0.2f animations:^{
-   			typedSelf.view.superview.backgroundColor = backgroundColor;
+   			typedSelf.view.superview.backgroundColor = [backgroundColor colorWithAlphaComponent:[preferences mediaControlsColorOpacity]];
 		}];
 	} else {
 		[UIView animateWithDuration:0.2f animations:^{
@@ -129,10 +129,19 @@ static MediaControlsViewController *currentView;
 %end
 %end
 
+void PlayingPreferencesUpdated(CFNotificationCenterRef center, void *observer, CFNotificationName name, const void *object, CFDictionaryRef userInfo) {
+	if (currentView) {
+		[currentView applyPlaying];
+	}
+}
+
+
 %ctor {
 	notificationManager = [PlayingNotificationManager sharedInstance];
 	manager = [PlayingManager sharedInstance];
 	preferences = [PlayingPreferences sharedInstance];
+
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, &PlayingPreferencesUpdated, (__bridge CFNotificationName)@"me.conorthedev.playing/ReloadPrefs", NULL, 0);
 
 	NSString *shortlookPath = @"/Library/MobileSubstrate/DynamicLibraries/ShortLook.dylib";
 	if ([[NSFileManager defaultManager] fileExistsAtPath:shortlookPath]){

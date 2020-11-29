@@ -29,7 +29,8 @@ void PlayingPreferencesCallback(CFNotificationCenterRef center, void *observer, 
 		@"customText": @"",
 		@"customTitle": @"",
 		@"autoclearInterval": @0,
-        @"colouredControls": @YES
+        @"colouredControls": @YES,
+        @"mediaControlsColorOpacity": @0.65
     }];
 
     [self.preferences registerBool:&_enabled default:YES forKey:@"enabled"];
@@ -38,5 +39,6 @@ void PlayingPreferencesCallback(CFNotificationCenterRef center, void *observer, 
 	[self.preferences registerObject:&_customTitle default:@"" forKey:@"customTitle"];
 	[self.preferences registerDouble:&_interval default:0 forKey:@"autoclearInterval"];
     [self.preferences registerBool:&_colouredControls default:YES forKey:@"colouredControls"];
+    [self.preferences registerDouble:&_mediaControlsColorOpacity default:0.65 forKey:@"mediaControlsColorOpacity"];
 }
 @end
